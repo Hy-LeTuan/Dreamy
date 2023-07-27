@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>asdfasd</title>
+	</head>
+	<body>
+		<h1>Flask Audio Recorder</h1>
+		<button id="recordButton">Record</button>
+		<button id="stopButton">Stop</button>
+		<audio id="audioPlayer"></audio>
+		<script src="//cdn.jsdelivr.net/npm/recorder-js"></script>
+		<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+	</body>
+</html>
