@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	stopRecording.addEventListener("click", () => {
-		console.log("Stop recording");
 		recorder.stop();
 		recordStatus.innerHTML = "Finishing...";
 		startRecording.disabled = false;
@@ -36,16 +35,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	function sendAudioData(audioBlob) {
-		console.log("Sending");
 		const formdata = new FormData();
 		formdata.append("audio", audioBlob, "recording.wav");
-		fetch("http://localhost:5000/audio", {
+		fetch("/audio", {
 			method: "POST",
 			body: formdata,
 			mode: "no-cors",
-		})
-			.then((response) => response.text())
-			.then((data) => console.log(data))
-			.catch((error) => console.error(error));
+		});
+		// .then((response) => response.text())
+		// .then((data) => console.log(data))
+		// .catch((error) => console.error(error));
 	}
 });

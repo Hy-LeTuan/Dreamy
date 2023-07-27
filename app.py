@@ -1,5 +1,6 @@
-from flask import Flask, request, render_template, flash, jsonify
+from flask import Flask, request, render_template, redirect, flash
 import os
+import time
 
 app = Flask(__name__)
 
@@ -15,14 +16,16 @@ def audio():
         return render_template("happy.html")
     else:
         if 'audio' not in request.files:
-            return jsonify({'error': 'No file uploaded'})
+            flash("Error, file not uploaded.")
+            time.sleep(50)
+            return redirect(request.url)
 
         uploaded_file = request.files['audio']
         file_path = "static/recordings"
         filename = uploaded_file.filename
         uploaded_file.save(os.path.join(file_path, filename))
 
-        return jsonify({'status': 'File uploaded successfully'})
+        return redirect("/")
 
 
 if __name__ == "__main__":
