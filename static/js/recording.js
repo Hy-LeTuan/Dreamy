@@ -32,6 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		recordStatus.innerHTML = "Finishing...";
 		startRecording.disabled = false;
 		stopRecording.disabled = true;
+		const mediaStream = recorder.stream;
+		mediaStream.getTracks().forEach((track) => track.stop());
 	});
 
 	function sendAudioData(audioBlob) {
@@ -42,8 +44,5 @@ document.addEventListener("DOMContentLoaded", () => {
 			body: formdata,
 			mode: "no-cors",
 		});
-		// .then((response) => response.text())
-		// .then((data) => console.log(data))
-		// .catch((error) => console.error(error));
 	}
 });
