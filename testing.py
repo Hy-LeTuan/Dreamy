@@ -1,7 +1,9 @@
-import sqlite3
+import torch
+import torchaudio
+import os
+from whisper import Whisper, ModelDimensions
 
-connection = sqlite3.connect("database.db")
-cur = connection.cursor()
-
-cur.execute("DROP TABLE IF EXISTS movie")
-cur.execute("CREATE TABLE movie(title, year, score)")
+# Load the model from its saved file
+model_path = "instance/medium.pt"
+model = Whisper()
+model.load_state_dict(torch.load(model_path))
