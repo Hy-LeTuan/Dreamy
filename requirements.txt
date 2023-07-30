@@ -6,3 +6,6 @@ seaborn
 openai-whisper
 flask_session
 flask_sqlalchemy
+flask_session
+flask_sqlalchemy
+transformeres
