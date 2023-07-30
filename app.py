@@ -7,12 +7,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 from helpers import login_required
 
-app = Flask(__name__)
 db = SQLAlchemy()
+app = Flask(__name__)
 app.secret_key = "secret"
 
 # config
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///instance/database.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024 * 1024
 app.config["UPLOAD_FOLDER"] = os.path.join("static", "recordings")
 BASE_AUDIO = app.config["UPLOAD_FOLDER"]
@@ -23,7 +23,7 @@ db.init_app(app)
 
 
 class User(db.Model):
-    __tablename__ = "user"
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
@@ -32,9 +32,18 @@ class User(db.Model):
 class Recordings(db.Model):
     __tablename__ = "recordings"
     id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String, nullable=False)
+    subject = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user = db.relationship("User", backref="recordings")
+
+
+class Transcripts(db.Model):
+    __tablename__ = "transcripts"
+    id = db.Column(db.Integer, primary_key=True)
+    trans_path = db.Column(db.String)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user = db.relationship("User", backref="transcripts")
 
 
 with app.app_context():
@@ -45,7 +54,7 @@ MODEL = whisper.load_model("medium")
 
 
 @app.route("/")
-@login_required
+# @login_required
 def index():
     return render_template("index.html")
 
@@ -60,8 +69,13 @@ def login():
             return render_template("apology.html", error="Username not entered")
 
 
+@app.route("/logout")
+def logout():
+    pass
+
+
 @app.route("/audio", methods=["GET", "POST"])
-@login_required
+# @login_required
 def audio():
     if request.method == "GET":
         return render_template("audio.html")
@@ -88,6 +102,7 @@ def audio():
             transcribe_number = len(os.listdir(transcribe_path))
             with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}"), "w", encoding="utf-8") as f:
                 f.write(result["text"] + "\n")
+            # user_id = session["user_id"]
         return redirect("/")
 
 
