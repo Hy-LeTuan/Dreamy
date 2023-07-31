@@ -53,6 +53,7 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     recordings = db.relationship("Recording", backref="user")
     transcripts = db.relationship("Transcript", backref="user")
+    summaries = db.relationship("Summary", backref="user")
 
 
 class Recording(db.Model):
@@ -66,6 +67,13 @@ class Transcript(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     subject = db.Column(db.String, nullable=False)
     trans_path = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+
+
+class Summary(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String, nullable=False)
+    sum_path = db.Column(db.String, nullable=Flask)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
 
@@ -121,19 +129,26 @@ def login():
             return apology("Username not provided.", 403)
         elif not request.form.get("password"):
             return apology("Password not provided.", 403)
-        username = request.form.get("username")
+        upload_username = request.form.get("username")
         password = request.form.get("password")
-        row = db.session.executer(db.Select(User).filter_by(username=username))
-        if row.first() is None:
+        row = db.session.execute(
+            db.Select(User).filter_by(username=upload_username)).first()
+        if row[0] is None:
             return apology("Username not found, please check if username is entered correctly or register new account.", 403)
-        elif check_password_hash(row.first().password, password) == False:
+        elif check_password_hash(row[0].password, password) == False:
             return apology("Incorrect password, please try again.", 403)
         else:
-            session["user_id"] = row.first().id
+            session["user_id"] = row[0].id
 
 
 @app.route("/logout")
 def logout():
+    session.clear()
+    return redirect("/  ")
+
+
+@app.route("/register")
+def register():
     pass
 
 
@@ -149,28 +164,51 @@ def audio():
             return redirect(request.url)
 
         uploaded_file = request.files['audio']
+        upload_subject = request.files["subject"]
         if uploaded_file.filename == "":
             flash("Error, file not uploaded.")
             time.sleep(50)
             return redirect(request.url)
 
+        if upload_subject.filename == "":
+            flash("Error, no subject found.")
+            time.sleep(50)
+            return redirect(request.url)
+
         if uploaded_file:
+            # LOAD AND CHECK FILES
             numbering = len(os.listdir(app.config["UPLOAD_FOLDER"]))
             filename = f"recording_{numbering}.wav"
             uploaded_file.save(os.path.join(
                 app.config["UPLOAD_FOLDER"], filename))
             result = MODEL.transcribe(os.path.join(
                 app.config["UPLOAD_FOLDER"], filename), language="vi", fp16=False, verbose=True, patience=2, beam_size=5)
+
+            # RECORDING
+            recording_path = os.path.join(
+                app.config["UPLOAD_FOLDER"], filename)
+            record = Recording(path=recording_path, subject=upload_subject)
+            db.session.add(record)
+
+            # TRANSCRIBE
             transcribe_path = os.path.join(
                 "static", "transcribes")
             transcribe_number = len(os.listdir(transcribe_path))
             with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}"), "w", encoding="utf-8") as f:
                 f.write(result["text"])
+            transribe = Transcript(subject=upload_subject, trans_path=os.path.join(
+                transcribe_path, f"transcribe_{transcribe_number}"))
+            db.session.add(transribe)
 
+            # SUMMARIZE
             summarize_path = os.path.join("static", "summarize")
             summarized = summarize_function(result["text"])
             with open(os.path.join(summarize_path, f"summarize_{len(os.listdir(summarize_path))}"), "w", encoding="utf-8") as f:
                 f.write(summarized)
+            summarize = os.path.join(
+                summarize_path, f"summarize_{len(os.listdir(summarize_path))}")
+            db.session.add(summarize)
+            db.session.commit()
 
         return redirect("/")
 
