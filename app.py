@@ -10,20 +10,22 @@ import torch
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
 # INITIALIZE DATABASE
-db = SQLAlchemy()
 app = Flask(__name__)
 app.secret_key = "secret"
 
 # CONFIGURATIONS
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///instance/database.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024 * 1024
 app.config["UPLOAD_FOLDER"] = os.path.join("static", "recordings")
 BASE_AUDIO = app.config["UPLOAD_FOLDER"]
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+
+db = SQLAlchemy(app)
 Session(app)
-db.init_app(app)
+# db.init_app(app)
 
 # INITIALIZE TRANSCRIPTION MODEL
 if torch.cuda.is_available():
@@ -46,24 +48,25 @@ SUM_MODEL.to(device)
 
 
 class User(db.Model):
-    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
+    recordings = db.relationship("Recording", backref="user")
+    transcripts = db.relationship("Transcript", backref="user")
 
 
-class Recordings(db.Model):
-    __tablename__ = "recordings"
-    id = db.Column(db.Integer)
+class Recording(db.Model):
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
     path = db.Column(db.String, nullable=False)
     subject = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
 
-class Transcripts(db.Model):
-    __tablename__ = "transcripts"
-    id = db.Column(db.Integer)
+class Transcript(db.Model):
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
     subject = db.Column(db.String, nullable=False)
-    trans_path = db.Column(db.String)
+    trans_path = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
 
 with app.app_context():
