@@ -15,6 +15,7 @@ app = Flask(__name__)
 app.secret_key = "secret"
 
 # CONFIGURATIONS
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///instance/database.db"
 app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024 * 1024
 app.config["UPLOAD_FOLDER"] = os.path.join("static", "recordings")
@@ -90,6 +91,15 @@ def summarize_function(src):
     output = SUM_MODEL_TOKENIZER.decode(
         summary_ids[0], skip_special_tokens=True)
     return output
+
+
+@app.after_request
+def after_request(response):
+    """Ensure responses aren't cached"""
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response
 
 
 @app.route("/")
