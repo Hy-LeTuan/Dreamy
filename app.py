@@ -5,7 +5,7 @@ import whisper
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
-from helpers import login_required
+from helpers import login_required, apology
 import torch
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
@@ -46,26 +46,23 @@ SUM_MODEL.to(device)
 
 class User(db.Model):
     __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
 
 
 class Recordings(db.Model):
     __tablename__ = "recordings"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer)
     path = db.Column(db.String, nullable=False)
     subject = db.Column(db.String, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    user = db.relationship("User", backref="recordings")
 
 
 class Transcripts(db.Model):
     __tablename__ = "transcripts"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer)
+    subject = db.Column(db.String, nullable=False)
     trans_path = db.Column(db.String)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    user = db.relationship("User", backref="transcripts")
 
 
 with app.app_context():
@@ -77,7 +74,7 @@ MODEL = whisper.load_model("medium")
 # SUMMARIZE TEXT
 
 
-def summarize(src):
+def summarize_function(src):
     tokenized_text = SUM_MODEL_TOKENIZER.encode(
         src, return_tensors="pt").to(device)
     SUM_MODEL.eval()
@@ -108,7 +105,18 @@ def login():
         return render_template("user/login.html")
     else:
         if not request.form.get("username"):
-            return render_template("apology.html", error="Username not entered")
+            return apology("Username not provided.", 403)
+        elif not request.form.get("password"):
+            return apology("Password not provided.", 403)
+        username = request.form.get("username")
+        password = request.form.get("password")
+        row = db.session.executer(db.Select(User).filter_by(username=username))
+        if row.first() is None:
+            return apology("Username not found, please check if username is entered correctly or register new account.", 403)
+        elif check_password_hash(row.first().password, password) == False:
+            return apology("Incorrect password, please try again.", 403)
+        else:
+            session["user_id"] = row.first().id
 
 
 @app.route("/logout")
@@ -144,8 +152,13 @@ def audio():
                 "static", "transcribes")
             transcribe_number = len(os.listdir(transcribe_path))
             with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}"), "w", encoding="utf-8") as f:
-                f.write(result["text"] + "\n")
-            # user_id = session["user_id"]
+                f.write(result["text"])
+
+            summarize_path = os.path.join("static", "summarize")
+            summarized = summarize_function(result["text"])
+            with open(os.path.join(summarize_path, f"summarize_{len(os.listdir(summarize_path))}"), "w", encoding="utf-8") as f:
+                f.write(summarized)
+
         return redirect("/")
 
 
