@@ -81,6 +81,8 @@ with app.app_context():
     db.create_all()
 
 # AUDIO MODEL
+
+
 MODEL = whisper.load_model("medium")
 
 # SUMMARIZE TEXT
@@ -103,6 +105,17 @@ def summarize_function(src):
         summary_ids[0], skip_special_tokens=True)
     return output
 
+# CHECK INPUT SAFETY
+
+
+def check_safty(text):
+    dangerous = ["'", '"', '$', '#', '@', '%', '^', '&',
+                 '*', '(', ')', '[', ']', '{', '}', "`", "~"]
+    for char in text:
+        if char in dangerous:
+            return False
+    return True
+
 
 @app.after_request
 def after_request(response):
@@ -114,7 +127,7 @@ def after_request(response):
 
 
 @app.route("/")
-# @login_required
+@login_required
 def index():
     return render_template("index.html")
 
@@ -144,16 +157,32 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/  ")
+    return redirect("/")
 
 
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    pass
+    if request.method == "GET":
+        return render_template("register.html")
+    else:
+        username = request.form["username"]
+        password = request.form["password"]
+        if username == "":
+            return apology("No username found, please enter username.", 403)
+        elif password == "":
+            return apology("No password found, please enter password.", 403)
+        elif not check_safty(username):
+            return apology("Username contains special character.", 403)
+        elif db.session.execute(db.Select(User).filter_by(username=username)).first() is not None:
+            return apology("Username already taken, please try another one.", 403)
+        else:
+            user = User(username=username,
+                        password=generate_password_hash(password))
+        return redirect("/")
 
 
 @app.route("/audio", methods=["GET", "POST"])
-# @login_required
+@login_required
 def audio():
     if request.method == "GET":
         return render_template("audio.html")
@@ -164,7 +193,7 @@ def audio():
             return redirect(request.url)
 
         uploaded_file = request.files['audio']
-        upload_subject = request.files["subject"]
+        upload_subject = request.form["subject"]
         if uploaded_file.filename == "":
             flash("Error, file not uploaded.")
             time.sleep(50)
