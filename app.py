@@ -108,7 +108,7 @@ def summarize_function(src):
 # CHECK INPUT SAFETY
 
 
-def check_safty(text):
+def check_safety(text):
     dangerous = ["'", '"', '$', '#', '@', '%', '^', '&',
                  '*', '(', ')', '[', ']', '{', '}', "`", "~"]
     for char in text:
@@ -171,7 +171,7 @@ def register():
             return apology("No username found, please enter username.", 403)
         elif password == "":
             return apology("No password found, please enter password.", 403)
-        elif not check_safty(username):
+        elif not check_safety(username):
             return apology("Username contains special character.", 403)
         elif db.session.execute(db.Select(User).filter_by(username=username)).first() is not None:
             return apology("Username already taken, please try another one.", 403)
