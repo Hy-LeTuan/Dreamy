@@ -1,13 +1,13 @@
 from flask import Flask, request, render_template, redirect, flash, session
 import os
 import time
-import whisper
+from faster_whisper import WhisperModel
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 from helpers import login_required, apology, get_question
 import torch
-from transformers import T5ForConditionalGeneration, T5Tokenizer
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # INITIALIZE DATABASE
 app = Flask(__name__)
@@ -27,22 +27,6 @@ db = SQLAlchemy(app)
 Session(app)
 # db.init_app(app)
 
-# INITIALIZE TRANSCRIPTION MODEL
-if torch.cuda.is_available():
-    device = torch.device("cuda")
-
-    print('There are %d GPU(s) available.' % torch.cuda.device_count())
-
-    print('We will use the GPU:', torch.cuda.get_device_name(0))
-else:
-    print('No GPU available, using the CPU instead.')
-    device = torch.device("cpu")
-
-SUM_MODEL = T5ForConditionalGeneration.from_pretrained(
-    "NlpHUST/t5-small-vi-summarization")
-SUM_MODEL_TOKENIZER = T5Tokenizer.from_pretrained(
-    "NlpHUST/t5-small-vi-summarization", legacy=False)
-SUM_MODEL.to(device)
 
 # DEFINE USER TABLES
 
@@ -82,28 +66,36 @@ with app.app_context():
 
 # AUDIO MODEL
 
+MODEL = WhisperModel("large-v2", device="cpu", compute_type="int8")
 
-MODEL = whisper.load_model("medium")
+
+# INITIALIZE TRANSCRIPTION MODEL
+
+SUM_MODEL_TOKENIZER = AutoTokenizer.from_pretrained(
+    "VietAI/vit5-base-vietnews-summarization")
+SUM_MODEL = AutoModelForSeq2SeqLM.from_pretrained(
+    "VietAI/vit5-base-vietnews-summarization")
+SUM_MODEL.to("cpu")
+
 
 # SUMMARIZE TEXT
 
+def summarize_function(sentence, path):
+    encoding = SUM_MODEL_TOKENIZER(sentence, return_tensors="pt")
 
-def summarize_function(src):
-    tokenized_text = SUM_MODEL_TOKENIZER.encode(
-        src, return_tensors="pt").to(device)
-    SUM_MODEL.eval()
-    summary_ids = SUM_MODEL.generate(
-        tokenized_text,
-        max_length=256,
-        num_beams=5,
-        repetition_penalty=2.5,
-        length_penalty=1.0,
-        early_stopping=True,
-        min_length=150
+    input_ids, attention_masks = encoding["input_ids"].to(
+        "cpu"), encoding["attention_mask"].to("cpu")
+
+    outputs = SUM_MODEL.generate(
+        input_ids=input_ids, attention_mask=attention_masks,
+        max_length=3000,
+        early_stopping=True
     )
-    output = SUM_MODEL_TOKENIZER.decode(
-        summary_ids[0], skip_special_tokens=True)
-    return output
+    with open(path, "w", encoding="utf-8") as f:
+        for output in outputs:
+            line = SUM_MODEL_TOKENIZER.decode(
+                output, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            f.write(line)
 
 # CHECK INPUT SAFETY
 
@@ -136,7 +128,7 @@ def index():
 def login():
     session.clear()
     if request.method == "GET":
-        return render_template("user/login.html")
+        return render_template("login.html")
     else:
         if not request.form.get("username"):
             return apology("Username not provided.", 403)
@@ -183,10 +175,12 @@ def register():
         else:
             user = User(username=username,
                         password=generate_password_hash(password))
+            db.session.add(user)
+            db.session.commit()
         return redirect("/")
 
 
-@app.route("/audio", methods=["GET", "POST"])
+@app.route("/record", methods=["GET", "POST"])
 @login_required
 def audio():
     if request.method == "GET":
@@ -210,18 +204,20 @@ def audio():
             return redirect(request.url)
 
         if uploaded_file:
-            # LOAD AND CHECK FILES
+            # LOAD AND CHECK AUDIO
             numbering = len(os.listdir(app.config["UPLOAD_FOLDER"]))
             filename = f"recording_{numbering}.wav"
             uploaded_file.save(os.path.join(
                 app.config["UPLOAD_FOLDER"], filename))
-            result = MODEL.transcribe(os.path.join(
-                app.config["UPLOAD_FOLDER"], filename), language="vi", fp16=False, verbose=True, patience=2, beam_size=5)
+            segments, info = MODEL.transcribe(os.path.join(
+                app.config["UPLOAD_FOLDER"], filename), language="vi", beam_size=5, vad_filter=True)
+            result = [segment.text for segment in segments][0]
 
             # RECORDING
             recording_path = os.path.join(
                 app.config["UPLOAD_FOLDER"], filename)
             record = Recording(path=recording_path, subject=upload_subject)
+            session["recording_path"] = recording_path
             db.session.add(record)
 
             # TRANSCRIBE
@@ -233,21 +229,15 @@ def audio():
             transribe = Transcript(subject=upload_subject, trans_path=os.path.join(
                 transcribe_path, f"transcribe_{transcribe_number}"))
             db.session.add(transribe)
+            session["transcribe_path"] = os.path.join(
+                transcribe_path, f"transcribe_{transcribe_number}")
 
-            # SUMMARIZE
-            summarize_path = os.path.join("static", "summarize")
-            summarized = summarize_function(result["text"])
-            with open(os.path.join(summarize_path, f"summarize_{len(os.listdir(summarize_path))}"), "w", encoding="utf-8") as f:
-                f.write(summarized)
-            summarize = os.path.join(
-                summarize_path, f"summarize_{len(os.listdir(summarize_path))}")
-            db.session.add(summarize)
             db.session.commit()
 
         return redirect("/")
 
 
-@app.route("/subject-folder")
+@app.route("/my_folder")
 def subject_folder():
     """Show subjects, recordings and summaries. """
     # display subjects and files within.
@@ -273,16 +263,41 @@ def personal():
     pass
 
 
-@app.route("/display-nearest")
+@app.route("/after-record")
 def display_nearest():
     # display the summarization for the last recording
-    pass
+    # SUMMARIZE
+    if session["transcript_path"] != None:
+        summarize_path = os.path.join("static", "summarize")
+        summarize = os.path.join(
+            summarize_path, f"summarize_{len(os.listdir(summarize_path))}")
+        result = ""
+        with open(session["transcript_path"], "r", encoding="utf-8") as f:
+            reader = f.readlines()
+            for line in reader:
+                result += line
+        summarize_function(result, summarize)
+        db.session.add(summarize)
+        db.session.commit()
+        session["transcript_path"] = None
+        session["summarize_path"] = summarize
+    summarize_text = ""
+    with open(session["summarize_path"], "r", encoding="utf-8") as f:
+        reader = f.readlines()
+        for line in reader:
+            summarize_text += line
+    return render_template("after_record.html", audio=session["recording_path"], summarize_text=summarize_text)
 
 
-@app.rotue("/feeback")
+@app.route("/feeback")
 def feedback():
     """Allow users to send feedbacks"""
     # remember to redirect to thank you page
+    pass
+
+
+@app.route("/quiz")
+def quiz():
     pass
 
 

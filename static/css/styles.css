@@ -21,4 +21,10 @@
 	font-weight: 400;
 	font-family: "Damion, Times New Roman";
 	color: #ffffff;
+	margin-left: 1rem;
+}
+
+.dreamer-navbar-icon {
+	width: 5rem;
+	height: 5rem;
 }
