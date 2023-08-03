@@ -5,7 +5,7 @@ import whisper
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
-from helpers import login_required, apology
+from helpers import login_required, apology, get_question
 import torch
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
@@ -160,6 +160,11 @@ def logout():
     return redirect("/")
 
 
+@app.route("/reset")
+def reset():
+    pass
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
@@ -240,6 +245,45 @@ def audio():
             db.session.commit()
 
         return redirect("/")
+
+
+@app.route("/subject-folder")
+def subject_folder():
+    """Show subjects, recordings and summaries. """
+    # display subjects and files within.
+    # files will be with dates attached
+    # when clicked on subject's name, will redirect to "display"
+
+
+@app.route("/display")
+def display():
+    """Display recording name and summay pairs"""
+    pass
+
+
+@app.route("/study-mode")
+def study_mode():
+    """In development"""
+    pass
+
+
+@app.route("/personal")
+def personal():
+    # display username + subjects + sidebar navigation
+    pass
+
+
+@app.route("/display-nearest")
+def display_nearest():
+    # display the summarization for the last recording
+    pass
+
+
+@app.rotue("/feeback")
+def feedback():
+    """Allow users to send feedbacks"""
+    # remember to redirect to thank you page
+    pass
 
 
 if __name__ == "__main__":

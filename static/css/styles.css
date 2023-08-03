@@ -1,0 +1,24 @@
+.nav-background-light {
+	background-color: #aae3e2;
+}
+
+.login-text {
+	color: #ffffff;
+}
+
+.bg-blue-light {
+	background-color: #95bdff;
+}
+
+.login-border {
+	border: 0.125rem;
+	border-radius: 0.125rem;
+	border-color: #300f1d;
+}
+
+.navbar-title {
+	font-size: 4rem;
+	font-weight: 400;
+	font-family: "Damion, Times New Roman";
+	color: #ffffff;
+}

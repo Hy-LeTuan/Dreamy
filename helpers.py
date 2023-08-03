@@ -19,3 +19,10 @@ def apology(message, code=400):
             s = s.replace(old, new)
         return s
     return render_template("apology.html", top=code, bottom=escape(message)), code
+
+
+def get_question(response):
+    """Response is a list of dictionaries, taken from reponse["data"]"""
+    for question in response:
+        print(
+            f"Question: {question['question']}, Answer: {question['answer']}, Options: {question['options']}")

@@ -2628,8 +2628,8 @@ fieldset:disabled .btn {
 }
 .btn-primary {
 	color: #fff;
-	background-color: #0d6efd;
-	border-color: #0d6efd;
+	background-color: #95BDFF;
+	border-color: #95BDFF;
 }
 .btn-primary:hover {
 	color: #fff;
@@ -6840,7 +6840,7 @@ fieldset:disabled .btn {
 	background-color: #dc3545 !important;
 }
 .bg-light {
-	background-color: #f8f9fa !important;
+	background-color: #aae3e2 !important;
 }
 .bg-dark {
 	background-color: #212529 !important;

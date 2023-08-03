@@ -1,24 +1,50 @@
 {% extends "layout.html" %} {% block title %} Register {% endblock %} {% block
 main %}
-<div class="container">
-	<form action="/register" , method="post">
-		<input
-			type="text"
-			,
-			autofocus="on"
-			,
-			autocomplete="on"
-			required,
-			name="username" />
-		<input
-			type="text"
-			,
-			required,
-			autofocus="off"
-			,
-			autocomplete="off"
-			name="password" />
-	</form>
+<div class="container mx-5">
+	<div
+		class="container d-flex justify-content-between align-items-center bg-blue-light">
+		<div class="container">@HanoiAirline608</div>
+		<div class="containe d-flex align-items-center justify-content-center">
+			<img src="" alt="" />
+			<img src="" alt="" />
+			<img src="" alt="" />
+		</div>
+	</div>
+	<div class="container">
+		<form action="/register" method="post" class="form-control">
+			<div class="mb-3">
+				<label for="username" class="col-form-label">Username</label>
+				<input
+					type="text"
+					,
+					autofocus="on"
+					,
+					autocomplete="on"
+					required,
+					name="username"
+					placeholder="Username"
+					id="username"
+					maxlength="20" />
+			</div>
+			<div class="mb-3">
+				<label for="password" class="col-form-label">Password</label>
+				<input
+					type="text"
+					,
+					required,
+					autofocus="off"
+					,
+					autocomplete="off"
+					name="password"
+					id="password"
+					placeholder="Password"
+					maxlength="50" />
+			</div>
+			<button class="btn btn-primary" type="submit">
+				<span class="login-text">Log In</span>
+			</button>
+		</form>
+	</div>
 </div>
 
 {% endblock %}
