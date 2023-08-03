@@ -10,26 +10,20 @@
 			<img src="" alt="" />
 		</div>
 	</div>
-	<div class="container">
+	<div class="container mx-autp max-w-md">
 		<form action="/login" method="post" class="form-control">
-			<div class="mb-5 form-group row">
-				<label for="username" class="col-sm-2 form-label"
-					>Username:
-				</label>
+			<div class="mb-5 form-group row mx-auto">
 				<input
 					autocomplete="off"
 					autofocus
-					class="form-control mx-auto w-auto"
+					class="form-control mx-auto w-auto my-3"
 					id="username"
 					name="username"
 					placeholder="Username"
 					type="text"
 					maxlength="20" />
 			</div>
-			<div class="mb-5 from-group row">
-				<label for="password" class="col-sm-2 form-label"
-					>Password:
-				</label>
+			<div class="mb-4 from-group row mx-auto">
 				<input
 					class="form-control mx-auto w-auto"
 					id="password"
@@ -38,13 +32,13 @@
 					type="password"
 					maxlength="50" />
 			</div>
-			<button class="btn btn-primary" type="submit">
+			<button class="btn btn-primary mb-3" type="submit">
 				<span class="login-text">Log In</span>
 			</button>
 		</form>
-		<div class="mb-3">
-			<img src="" alt="" />
-			<a href="/reset" class="nav-link">Forget password?</a>
+		<div class="mb-3 d-flex justify-content-center mt-3">
+			<img src="static/heart.svg" alt="" />
+			<a href="/reset" class="nav-link">Forget password or username?</a>
 		</div>
 	</div>
 </div>

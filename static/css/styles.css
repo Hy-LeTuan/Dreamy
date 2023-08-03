@@ -28,3 +28,10 @@
 	width: 5rem;
 	height: 5rem;
 }
+
+.footer-span {
+	font-size: 1.25rem;
+	color: #300f1d;
+	font-family: "Lemon";
+	font-weight: lighter;
+}
