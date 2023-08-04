@@ -144,6 +144,7 @@ def login():
             return apology("Incorrect password, please try again.", 403)
         else:
             session["user_id"] = row[0].id
+        return redirect("/")
 
 
 @app.route("/logout")
@@ -162,21 +163,23 @@ def register():
     if request.method == "GET":
         return render_template("register.html")
     else:
-        username = request.form["username"]
-        password = request.form["password"]
-        if username == "":
+        uploaded_username = request.form.get("username")
+        uploaded_password = request.form.get("password")
+        if uploaded_username == "":
             return apology("No username found, please enter username.", 403)
-        elif password == "":
+        elif uploaded_password == "":
             return apology("No password found, please enter password.", 403)
-        elif not check_safety(username):
+        elif not check_safety(uploaded_username):
             return apology("Username contains special character.", 403)
-        elif db.session.execute(db.Select(User).filter_by(username=username)).first() is not None:
+        elif db.session.execute(db.Select(User).filter_by(username=uploaded_username)).first() != None:
             return apology("Username already taken, please try another one.", 403)
         else:
-            user = User(username=username,
-                        password=generate_password_hash(password))
+            user = User(username=uploaded_username,
+                        password=generate_password_hash(uploaded_password))
             db.session.add(user)
             db.session.commit()
+            session["user_id"] = db.session.execute(
+                db.select(User).filter_by(username=uploaded_username)).first()[0].id
         return redirect("/")
 
 
@@ -184,7 +187,7 @@ def register():
 @login_required
 def audio():
     if request.method == "GET":
-        return render_template("audio.html")
+        return render_template("record.html")
     else:
         if 'audio' not in request.files:
             flash("Error, file not uploaded.")
@@ -192,7 +195,7 @@ def audio():
             return redirect(request.url)
 
         uploaded_file = request.files['audio']
-        upload_subject = request.form["subject"]
+        upload_subject = request.form.get["subject"]
         if uploaded_file.filename == "":
             flash("Error, file not uploaded.")
             time.sleep(50)
@@ -213,10 +216,15 @@ def audio():
                 app.config["UPLOAD_FOLDER"], filename), language="vi", beam_size=5, vad_filter=True)
             result = [segment.text for segment in segments][0]
 
+            # LOAD USER
+            current_user = db.session.execute(db.Select(User).filter_by(
+                id=session["user_id"])).first()[0]
+
             # RECORDING
             recording_path = os.path.join(
                 app.config["UPLOAD_FOLDER"], filename)
-            record = Recording(path=recording_path, subject=upload_subject)
+            record = Recording(path=recording_path,
+                               subject=upload_subject, user=current_user)
             session["recording_path"] = recording_path
             db.session.add(record)
 
@@ -227,14 +235,21 @@ def audio():
             with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}"), "w", encoding="utf-8") as f:
                 f.write(result["text"])
             transribe = Transcript(subject=upload_subject, trans_path=os.path.join(
-                transcribe_path, f"transcribe_{transcribe_number}"))
+                transcribe_path, f"transcribe_{transcribe_number}"), user=current_user)
             db.session.add(transribe)
             session["transcribe_path"] = os.path.join(
                 transcribe_path, f"transcribe_{transcribe_number}")
 
+            # SUMMARY
+            summarize_path = os.path.join("static", "summarize")
+            summarize = os.path.join(
+                summarize_path, f"summarize_{len(os.listdir(summarize_path))}")
+            summary = Summary(subject=upload_subject,
+                              sum_path=summarize, user=current_user)
+            session["summary_path"] = summarize
             db.session.commit()
 
-        return redirect("/")
+        return redirect("/after_record")
 
 
 @app.route("/my_folder")
@@ -266,21 +281,15 @@ def personal():
 @app.route("/after-record")
 def display_nearest():
     # display the summarization for the last recording
-    # SUMMARIZE
-    if session["transcript_path"] != None:
-        summarize_path = os.path.join("static", "summarize")
-        summarize = os.path.join(
-            summarize_path, f"summarize_{len(os.listdir(summarize_path))}")
+    if session["transcript_path"] != None and session["summary_path"] != None:
         result = ""
         with open(session["transcript_path"], "r", encoding="utf-8") as f:
             reader = f.readlines()
             for line in reader:
                 result += line
-        summarize_function(result, summarize)
-        db.session.add(summarize)
-        db.session.commit()
+        summarize_function(result, session["summary_path"])
         session["transcript_path"] = None
-        session["summarize_path"] = summarize
+        session["summarize_path"] = None
     summarize_text = ""
     with open(session["summarize_path"], "r", encoding="utf-8") as f:
         reader = f.readlines()

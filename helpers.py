@@ -14,7 +14,7 @@ def login_required(f):
 
 def apology(message, code=400):
     def escape(s):
-        for old, new in [("-", "--"), (" ", "-"), ("_", "__"), ("?", "~q"),
+        for old, new in [("-", "--"), ("_", "__"), ("?", "~q"),
                          ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
             s = s.replace(old, new)
         return s

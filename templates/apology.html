@@ -1,0 +1,21 @@
+{% extends "layout.html" %} {% block title %} Apology {% endblock %} {% block
+main %}
+<div class="container-fluid mx-auto apology-container">
+	<span class="apology-title">{{ top }}</span>
+	<div class="container">
+		<p><span class="apology-body">Error, {{ bottom }}!</span></p>
+		<p>
+			<span class="apology-body"
+				>Please go back to <a href="/">Homepage</a> or wait a
+				minute.</span
+			>
+		</p>
+	</div>
+	<div>
+		<img
+			src="static/apology_flower.png"
+			alt="Apology flower"
+			id="apology-flower-icon" />
+	</div>
+</div>
+{% endblock %}

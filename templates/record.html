@@ -1,12 +1,13 @@
 {% extends "layout.html" %} {% block title %} Homepage {% endblock %} {% block
 main %}
-<div>
-	<h1>Audio Recorder</h1>
+<div class="container-fluid">
+	<h1 class="audio-title">Audio Recorder</h1>
 	<form action="/audio">
-		<select name="subject" id="subject_option">
-			<option value="math">Math</option>
-			<option value="physics">Physics</option>
-		</select>
+		<input
+			type="text"
+			name="subject"
+			value="subject"
+			placeholder="Enter your subject" />
 		<input type="submit" value="submit" />
 	</form>
 	<button id="start-recording">Start Recording</button>

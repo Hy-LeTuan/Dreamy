@@ -1832,12 +1832,12 @@ progress {
 	color: #212529;
 	background-color: #fff;
 	background-clip: padding-box;
-	border: 1px solid #ced4da;
+	/* border: 4px solid #000; */
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
-	border-radius: 0.25rem;
-	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	/* border-radius: 0.3rem; */
+	transition: border-color 0.15s ease-in-out, box-shadow 0 15s ease-in-out;
 }
 @media (prefers-reduced-motion: reduce) {
 	.form-control {
@@ -2628,8 +2628,8 @@ fieldset:disabled .btn {
 }
 .btn-primary {
 	color: #fff;
-	background-color: #95BDFF;
-	border-color: #95BDFF;
+	background-color: #95bdff;
+	border-color: #95bdff;
 }
 .btn-primary:hover {
 	color: #fff;

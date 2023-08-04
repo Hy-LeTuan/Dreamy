@@ -30,8 +30,94 @@
 }
 
 .footer-span {
-	font-size: 1.25rem;
+	font-size: 1.05rem;
 	color: #300f1d;
 	font-family: "Lemon";
-	font-weight: lighter;
+	font-weight: 200;
+}
+
+.container-form {
+	border: 4px solid #000 !important;
+	border-radius: 0.5rem !important;
+}
+
+#blue-login-bar {
+	min-height: 2.5rem;
+}
+
+.login-text {
+	font-family: Indie Flower;
+}
+
+.login-icon-box {
+	display: flex;
+	border-radius: 10px;
+	border: 4px solid #300f1d;
+	background: #fff;
+	max-height: 2.5rem;
+	min-height: 2rem;
+	text-align: center;
+	align-items: center;
+}
+
+.login-icon {
+	max-height: 2rem;
+	max-width: 2rem;
+	display: inline-block;
+}
+
+.apology-title {
+	color: #000;
+	text-align: center;
+	font-family: "Lemon";
+	font-size: 2rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.apology-body {
+	color: #000;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: Indie Flower;
+	font-size: 2rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+#apology-flower-icon {
+	height: 15rem;
+}
+
+.apology-container {
+	background: url(static/apology_background.png),
+		lightgray 50% / cover no-repeat;
+}
+
+.login-title {
+	color: #300f1d;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: Lemon;
+	font-size: 40px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.bg-brown-light {
+	background-color: #dad0c2;
+}
+
+.nav-item > .nav-link {
+	color: #fff !important;
+	font-family: "Damion";
+	font-size: 1.5rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.audio-title {
 }

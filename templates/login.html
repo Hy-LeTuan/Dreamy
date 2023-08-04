@@ -1,44 +1,64 @@
 {% extends "layout.html" %} {% block title %} Login {% endblock %} {% block main
 %}
 <div class="container mx-auto max-w-md">
-	<div
-		class="container d-flex justify-content-between align-items-center bg-blue-light">
-		<div class="container">@HanoiAirline608</div>
-		<div class="containe d-flex align-items-center justify-content-center">
-			<img src="" alt="" />
-			<img src="" alt="" />
-			<img src="" alt="" />
+	<div class="container-form">
+		<div
+			class="container d-flex justify-content-between align-items-center bg-blue-light flex-shrink-0"
+			id="blue-login-bar">
+			<div>
+				<span class="login-text">@HanoiAirline608</span>
+			</div>
+			<div
+				class="d-flex align-items-center justify-content-center gap-sm-3">
+				<div class="container login-icon-box">
+					<img class="login-icon" src="static/dash.svg" alt="Dash" />
+				</div>
+				<div class="container login-icon-box">
+					<img
+						class="login-icon"
+						src="static/folder.svg"
+						alt="Folder" />
+				</div>
+				<div class="container login-icon-box">
+					<img class="login-icon" src="static/ex.svg" alt="X" />
+				</div>
+			</div>
 		</div>
-	</div>
-	<div class="container mx-autp max-w-md">
-		<form action="/login" method="post" class="form-control">
-			<div class="mb-5 form-group row mx-auto">
-				<input
-					autocomplete="off"
-					autofocus
-					class="form-control mx-auto w-auto my-3"
-					id="username"
-					name="username"
-					placeholder="Username"
-					type="text"
-					maxlength="20" />
+		<div class="container">
+			<div class="mx-auto">
+				<span class="login-title">GET READY AND START DREAMING</span>
 			</div>
-			<div class="mb-4 from-group row mx-auto">
-				<input
-					class="form-control mx-auto w-auto"
-					id="password"
-					name="password"
-					placeholder="Password"
-					type="password"
-					maxlength="50" />
+			<form action="/login" method="post" class="form-control">
+				<div class="mb-5 form-group row">
+					<input
+						autocomplete="off"
+						autofocus
+						class="form-control mx-auto w-auto my-3"
+						id="username"
+						name="username"
+						placeholder="Username"
+						type="text"
+						maxlength="20" />
+				</div>
+				<div class="mb-4 from-group row mx-auto">
+					<input
+						class="form-control mx-auto w-auto"
+						id="password"
+						name="password"
+						placeholder="Password"
+						type="password"
+						maxlength="50" />
+				</div>
+				<button class="btn btn-primary mb-3" type="submit">
+					<span class="login-text">Log In</span>
+				</button>
+			</form>
+			<div class="mb-3 d-flex justify-content-center mt-3">
+				<img src="static/heart.svg" alt="" />
+				<a href="/reset" class="nav-link"
+					>Forget password or username - need some help?</a
+				>
 			</div>
-			<button class="btn btn-primary mb-3" type="submit">
-				<span class="login-text">Log In</span>
-			</button>
-		</form>
-		<div class="mb-3 d-flex justify-content-center mt-3">
-			<img src="static/heart.svg" alt="" />
-			<a href="/reset" class="nav-link">Forget password or username?</a>
 		</div>
 	</div>
 </div>
