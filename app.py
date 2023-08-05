@@ -7,6 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 from helpers import login_required, apology, get_question
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+import requests as rq
 
 # INITIALIZE DATABASE
 app = Flask(__name__)
@@ -21,6 +22,7 @@ app.config["UPLOAD_FOLDER"] = os.path.join("static", "recordings")
 BASE_AUDIO = app.config["UPLOAD_FOLDER"]
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+api_key = "qtteFO3qd0O2HhcbTPeNu3B1qiqWJsN"
 
 db = SQLAlchemy(app)
 Session(app)
@@ -41,7 +43,7 @@ class User(db.Model):
 
 class Recording(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
-    filename = db.Column(db.Integer, nullable=False, primary_key=True)
+    filename = db.Column(db.String)
     path = db.Column(db.String, nullable=False)
     subject = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
@@ -157,9 +159,19 @@ def logout():
     return redirect("/")
 
 
-@app.route("/reset")
+@app.route("/reset", methods=["GET", "POST"])
 def reset():
-    pass
+    if request.method == "GET":
+        return render_template("reset.html")
+    else:
+        user = db.session.execute(db.Select(User).filter_by(
+            id=session["user_id"])).first()[0]
+        new_password = request.form.get("new_password")
+        if new_password == "":
+            return apology(403, "No new password found, please try again")
+        user.password = generate_password_hash(new_password)
+        db.session.commit()
+        return redirect("/login")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -266,15 +278,27 @@ def apology():
 @app.route("/my_folder")
 def subject_folder():
     """Show subjects, recordings and summaries. """
-    # display subjects and files within.
-    # files will be with dates attached
-    # when clicked on subject's name, will redirect to "display"
+    user = db.session.execute(db.Select(User).filter_by(
+        id=session["user_id"])).first()[0]
+    recordings = user.recordings
 
 
 @app.route("/display")
 def display():
     """Display recording name and summay pairs"""
-    pass
+    user = db.session.execute(db.Select(User).filter_by(
+        id=session["user_id"])).first()[0]
+    recordings = user.recordings
+    summaries = user.summaries
+    recording_name = [record.filename if record.filename !=
+                      "" else "No name yet" for record in recordings]
+    all_summary = []
+    subjects = []
+    for summary in summaries:
+        subjects.append(summary.subject)
+        with open(summary.sum_path, "r", encoding="utf-8") as f:
+            all_summary.append(f.readlines()[0])
+    return render_template("display.html", recording_name=recording_name, subjects=subjects, all_summary=all_summary, length=len(recording_name))
 
 
 @app.route("/study-mode")
@@ -293,7 +317,7 @@ def personal():
 
 @app.route("/after_record", methods=["POST", "GET"])
 def after_record():
-    # display the summarization for the last recording
+    """Display summarization for latest recording"""
     if request.method == "GET":
         if session["transcript_path"] != None and session["summary_path"] != None:
             result = ""
@@ -302,14 +326,20 @@ def after_record():
                 for line in reader:
                     result += line
             summarize_text = summarize_function(
-                result, session["summary_path"])
-        return render_template("after_record.html", summarize_text=summarize_text)
+                result + "</s>", session["summary_path"])
+        return render_template("after_record.html", summarize_text=summarize_text, transcribe_text=result)
     else:
         filename = request.form.get("file_name")
+        new_summary = request.form.get("new_summary")
         if filename != "":
             recording = db.session.execute(
                 db.Select(Recording).filter_by(path=session["recording_path"])).first()[0]
             recording.filename = filename
+            db.session.commit()
+        if new_summary != "":
+            with open(session["summary_path"], "w", encoding="utf-8") as f:
+                f.write(new_summary)
+        return redirect("/display")
 
 
 @app.route("/feeback")
@@ -321,6 +351,7 @@ def feedback():
 
 @app.route("/quiz")
 def quiz():
+
     pass
 
 

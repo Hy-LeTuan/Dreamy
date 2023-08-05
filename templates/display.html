@@ -1,0 +1,23 @@
+{% extends "layout.html" %} {% block title %} Display {% endblock %} {% block
+main %}
+<div class="container">
+	<table>
+		<thead>
+			<tr>
+				<th>Recording</th>
+				<th>Subject</th>
+				<th>Summary</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for i in range(length) %}
+			<tr>
+				<th>{{ recording_name[i] }}</th>
+				<th>{{ subjects[i] }}</th>
+				<th>{{ all_summary[i] }}</th>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}
