@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, flash, session
+from flask import Flask, request, render_template, redirect, flash, session, jsonify
 import os
 import time
 from faster_whisper import WhisperModel
@@ -6,7 +6,6 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 from helpers import login_required, apology, get_question
-import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # INITIALIZE DATABASE
@@ -42,6 +41,7 @@ class User(db.Model):
 
 class Recording(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
+    filename = db.Column(db.Integer, nullable=False, primary_key=True)
     path = db.Column(db.String, nullable=False)
     subject = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
@@ -91,11 +91,15 @@ def summarize_function(sentence, path):
         max_length=3000,
         early_stopping=True
     )
+    result = ""
     with open(path, "w", encoding="utf-8") as f:
         for output in outputs:
             line = SUM_MODEL_TOKENIZER.decode(
                 output, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             f.write(line)
+            result += line
+    return result
+
 
 # CHECK INPUT SAFETY
 
@@ -185,26 +189,25 @@ def register():
 
 @app.route("/record", methods=["GET", "POST"])
 @login_required
-def audio():
+def record():
     if request.method == "GET":
         return render_template("record.html")
     else:
+        response = {"ok": False}
         if 'audio' not in request.files:
             flash("Error, file not uploaded.")
             time.sleep(50)
-            return redirect(request.url)
+            return apology("No audio recording file found, please try again", 403)
 
         uploaded_file = request.files['audio']
-        upload_subject = request.form.get["subject"]
+        upload_subject = request.form.get("subject")
         if uploaded_file.filename == "":
             flash("Error, file not uploaded.")
             time.sleep(50)
-            return redirect(request.url)
+            return apology("Filename corrupted, please try again", 403)
 
-        if upload_subject.filename == "":
-            flash("Error, no subject found.")
-            time.sleep(50)
-            return redirect(request.url)
+        if upload_subject == "":
+            return apology("No subject found, please try again", 403)
 
         if uploaded_file:
             # LOAD AND CHECK AUDIO
@@ -214,8 +217,10 @@ def audio():
                 app.config["UPLOAD_FOLDER"], filename))
             segments, info = MODEL.transcribe(os.path.join(
                 app.config["UPLOAD_FOLDER"], filename), language="vi", beam_size=5, vad_filter=True)
-            result = [segment.text for segment in segments][0]
-
+            result = [segment.text for segment in segments]
+            if len(result) == 0:
+                return apology("No speech found in recording, pleas try again", 403)
+            result = result[0]
             # LOAD USER
             current_user = db.session.execute(db.Select(User).filter_by(
                 id=session["user_id"])).first()[0]
@@ -230,14 +235,14 @@ def audio():
 
             # TRANSCRIBE
             transcribe_path = os.path.join(
-                "static", "transcribes")
+                "static", "transcripts")
             transcribe_number = len(os.listdir(transcribe_path))
             with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}"), "w", encoding="utf-8") as f:
-                f.write(result["text"])
+                f.write(result)
             transribe = Transcript(subject=upload_subject, trans_path=os.path.join(
                 transcribe_path, f"transcribe_{transcribe_number}"), user=current_user)
             db.session.add(transribe)
-            session["transcribe_path"] = os.path.join(
+            session["transcript_path"] = os.path.join(
                 transcribe_path, f"transcribe_{transcribe_number}")
 
             # SUMMARY
@@ -247,9 +252,15 @@ def audio():
             summary = Summary(subject=upload_subject,
                               sum_path=summarize, user=current_user)
             session["summary_path"] = summarize
+            db.session.add(summary)
             db.session.commit()
+            response["ok"] = True
+        return jsonify(response)
 
-        return redirect("/after_record")
+
+@app.route("/apology")
+def apology():
+    return render_template("apology.html", top=403, bottom="Opps, looks like there is something wrong. Please try again ")
 
 
 @app.route("/my_folder")
@@ -275,27 +286,30 @@ def study_mode():
 @app.route("/personal")
 def personal():
     # display username + subjects + sidebar navigation
-    pass
+    user = db.session.execute(db.Select(User).filter_by(
+        id=session["user_id"])).first()[0]
+    return render_template("/personal", user=user)
 
 
-@app.route("/after-record")
-def display_nearest():
+@app.route("/after_record", methods=["POST", "GET"])
+def after_record():
     # display the summarization for the last recording
-    if session["transcript_path"] != None and session["summary_path"] != None:
-        result = ""
-        with open(session["transcript_path"], "r", encoding="utf-8") as f:
-            reader = f.readlines()
-            for line in reader:
-                result += line
-        summarize_function(result, session["summary_path"])
-        session["transcript_path"] = None
-        session["summarize_path"] = None
-    summarize_text = ""
-    with open(session["summarize_path"], "r", encoding="utf-8") as f:
-        reader = f.readlines()
-        for line in reader:
-            summarize_text += line
-    return render_template("after_record.html", audio=session["recording_path"], summarize_text=summarize_text)
+    if request.method == "GET":
+        if session["transcript_path"] != None and session["summary_path"] != None:
+            result = ""
+            with open(session["transcript_path"], "r", encoding="utf-8") as f:
+                reader = f.readlines()
+                for line in reader:
+                    result += line
+            summarize_text = summarize_function(
+                result, session["summary_path"])
+        return render_template("after_record.html", summarize_text=summarize_text)
+    else:
+        filename = request.form.get("file_name")
+        if filename != "":
+            recording = db.session.execute(
+                db.Select(Recording).filter_by(path=session["recording_path"])).first()[0]
+            recording.filename = filename
 
 
 @app.route("/feeback")

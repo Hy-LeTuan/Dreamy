@@ -3,6 +3,7 @@
 }
 
 .login-text {
+	font-size: 2rem;
 	color: #ffffff;
 }
 
@@ -120,4 +121,25 @@
 }
 
 .audio-title {
+	color: #000;
+	text-align: center;
+	font-family: "Damion";
+	font-size: 4rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.recording-button {
+	border-radius: 0.5rem;
+	background-color: #fff;
+}
+
+#pink-login-bar {
+	min-height: 3rem;
+	background: #f6c5d6;
+}
+
+.record-container {
+	max-width: 60rem !important;
 }

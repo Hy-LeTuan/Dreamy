@@ -1,0 +1,14 @@
+{% extends "layout.html" %} {% block title %} After record {% endblock %} {%
+block main %}
+<div class="container-fluid mx-auto">
+	<form action="after_record" method="post">
+		<input type="text" name="file_name" />
+		<div class="container">
+			<div class="summary">
+				<p>{{ summarize_text }}</p>
+			</div>
+		</div>
+		<input type="submit" value="Set file name." />
+	</form>
+</div>
+{% endblock %}

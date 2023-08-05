@@ -7,12 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	const recordStatus = document.querySelector("#record-status");
 	let selectElement;
 	let selectedValue;
-
 	let recorder;
 	let chunks = [];
 
 	startRecording.addEventListener("click", () => {
 		navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+			let start = new Date();
 			recorder = new MediaRecorder(stream);
 			recorder.start();
 			recordStatus.innerHTML = "Recording...";
@@ -23,9 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				chunks.push(event.data);
 			});
 			recorder.addEventListener("stop", () => {
-				recordStatus.innerHTML = "";
-				// const audioBlob = new Blob(chunks);
-				// sendAudioData(audioBlob);
+				let end = new Date();
+				recordStatus.innerHTML =
+					"Press submit, then please wait until you're being redirected";
 			});
 		});
 	});
@@ -40,9 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	form.addEventListener("submit", (event) => {
-		event.preventDefault(); // Prevent form submission
+		event.preventDefault();
 
-		selectElement = document.getElementById("subject_option");
+		selectElement = document.getElementById("subject");
 		selectedValue = selectElement.value;
 		if (chunks.length > 0) {
 			const audioBlob = new Blob(chunks);
@@ -54,10 +54,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		const formdata = new FormData();
 		formdata.append("audio", audioBlob, "recording.wav");
 		formdata.append("subject", subject_value);
-		fetch("/audio", {
+		fetch("/record", {
 			method: "POST",
 			body: formdata,
 			mode: "no-cors",
-		});
+		})
+			.then((response) => {
+				if (response.ok) {
+					response.json().then((data) => {
+						window.location.href = "/after_record";
+					});
+				} else {
+					window.location.href = "/apology";
+				}
+			})
+			.catch((error) => console.error("Error:", error));
 	}
 });

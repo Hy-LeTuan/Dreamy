@@ -1,17 +1,60 @@
-{% extends "layout.html" %} {% block title %} Homepage {% endblock %} {% block
+{% extends "layout.html" %} {% block title %} Record {% endblock %} {% block
 main %}
-<div class="container-fluid">
-	<h1 class="audio-title">Audio Recorder</h1>
-	<form action="/audio">
-		<input
-			type="text"
-			name="subject"
-			value="subject"
-			placeholder="Enter your subject" />
-		<input type="submit" value="submit" />
-	</form>
-	<button id="start-recording">Start Recording</button>
-	<button id="stop-recording" disabled>Stop Recording</button>
-	<span id="record-status"></span>
+<div class="container mx-auto max-w-md record-container">
+	<h3 class="audio-title">DREAMY MODE</h3>
+	<div class="container-form">
+		<div
+			class="container d-flex justify-content-between align-items-center bg-blue-light flex-shrink-0"
+			id="pink-login-bar">
+			<div>
+				<span class="login-text">@HanoiAirline608</span>
+			</div>
+			<div
+				class="d-flex align-items-center justify-content-center gap-sm-3">
+				<div class="container login-icon-box">
+					<img class="login-icon" src="static/dash.svg" alt="Dash" />
+				</div>
+				<div class="container login-icon-box">
+					<img
+						class="login-icon"
+						src="static/folder.svg"
+						alt="Folder" />
+				</div>
+				<div class="container login-icon-box">
+					<img class="login-icon" src="static/ex.svg" alt="X" />
+				</div>
+			</div>
+		</div>
+		<div class="container mx-auto">
+			<form action="/record" class="form-control">
+				<div class="mb-2 form-group row">
+					<input
+						type="text"
+						name="subject"
+						id="subject"
+						class="form-control mx-auto w-auto my-3"
+						placeholder="Enter your subject" />
+				</div>
+				<div>
+					<button id="start-recording" class="recording-button">
+						Start Recording
+					</button>
+					<button
+						id="stop-recording"
+						disabled
+						class="recording-button">
+						Stop Recording
+					</button>
+				</div>
+				<span id="record-status"></span>
+				<div class="mb-2 form-group row">
+					<input
+						type="submit"
+						value="Submit"
+						class="form-control mx-auto w-auto my-3" />
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 {% endblock %}
