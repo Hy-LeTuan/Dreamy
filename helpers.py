@@ -1,6 +1,9 @@
 from flask import redirect, session, render_template
 from flask import redirect, session
 from functools import wraps
+import requests
+api_key = "qtteFO3qd0O2HhcbTPeNu3B1qiqWJsN"
+url = "https://api.opexams.com"
 
 
 def login_required(f):
@@ -21,8 +24,28 @@ def apology(message, code=400):
     return render_template("apology.html", top=code, bottom=escape(message)), code
 
 
-def get_question(response):
+def check_api_usage():
+    header = {
+        "api-key": api_key
+    }
+    response = requests.get(f"{url}/questions-generator/usage")
+    response = response.json()
+    return response
+
+
+def get_question(context, question_type):
     """Response is a list of dictionaries, taken from reponse["data"]"""
-    for question in response:
-        print(
-            f"Question: {question['question']}, Answer: {question['answer']}, Options: {question['options']}")
+    header = {
+        "api-key": api_key,
+        "request-type": "test"
+    }
+
+    body = {
+        "type": "contextBased",
+        "context": context,
+        "questionType": question_type,
+        "language": "Vietnamese"
+    }
+
+    response = requests.post(headers=header, json=body).json()
+    return response

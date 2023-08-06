@@ -22,7 +22,6 @@ app.config["UPLOAD_FOLDER"] = os.path.join("static", "recordings")
 BASE_AUDIO = app.config["UPLOAD_FOLDER"]
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-api_key = "qtteFO3qd0O2HhcbTPeNu3B1qiqWJsN"
 
 db = SQLAlchemy(app)
 Session(app)
@@ -144,7 +143,7 @@ def login():
         password = request.form.get("password")
         row = db.session.execute(
             db.Select(User).filter_by(username=upload_username)).first()
-        if row[0] is None:
+        if row == None:
             return apology("Username not found, please check if username is entered correctly or register new account.", 403)
         elif check_password_hash(row[0].password, password) == False:
             return apology("Incorrect password, please try again.", 403)
@@ -271,16 +270,25 @@ def record():
 
 
 @app.route("/apology")
-def apology():
+def route_apology():
     return render_template("apology.html", top=403, bottom="Opps, looks like there is something wrong. Please try again ")
 
 
 @app.route("/my_folder")
-def subject_folder():
-    """Show subjects, recordings and summaries. """
+def my_folder():
+    """Show subjects, recordings and summaries."""
     user = db.session.execute(db.Select(User).filter_by(
         id=session["user_id"])).first()[0]
     recordings = user.recordings
+    record_subject_dict = {}
+    for rec in recordings:
+        filename = rec.filename if rec.filename != "" else "Untitled recording"
+        if rec.subject.capitalize() in record_subject_dict:
+            record_subject_dict[rec.subject].append(filename)
+        else:
+            record_subject_dict[rec.subject.capitalize()] = []
+            record_subject_dict[rec.subject.capitalize()].append(filename)
+    return render_template("my_folder.html", rec_subject=record_subject_dict)
 
 
 @app.route("/display")
@@ -291,7 +299,7 @@ def display():
     recordings = user.recordings
     summaries = user.summaries
     recording_name = [record.filename if record.filename !=
-                      "" else "No name yet" for record in recordings]
+                      "" else "Untitled recording" for record in recordings]
     all_summary = []
     subjects = []
     for summary in summaries:
@@ -305,14 +313,6 @@ def display():
 def study_mode():
     """In development"""
     pass
-
-
-@app.route("/personal")
-def personal():
-    # display username + subjects + sidebar navigation
-    user = db.session.execute(db.Select(User).filter_by(
-        id=session["user_id"])).first()[0]
-    return render_template("/personal", user=user)
 
 
 @app.route("/after_record", methods=["POST", "GET"])
