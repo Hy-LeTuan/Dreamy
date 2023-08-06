@@ -37,7 +37,6 @@ def get_question(context, question_type):
     """Response is a list of dictionaries, taken from reponse["data"]"""
     header = {
         "api-key": api_key,
-        "request-type": "test"
     }
 
     body = {

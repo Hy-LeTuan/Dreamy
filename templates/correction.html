@@ -1,0 +1,23 @@
+{% extends "layout.html" %} {% block title %} Correction {% endblock %} {% block
+main %}
+<div class="container">
+	<table>
+		<thead>
+			<tr>
+				<th>Question</th>
+				<th>Your choice</th>
+				<th>Correct answer</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for question in wrong %}
+			<tr>
+				<th>{{ question }}</th>
+				<th>{{ wrong[question][0] }}</th>
+				<th>{{ wrong[question][1] }}</th>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}

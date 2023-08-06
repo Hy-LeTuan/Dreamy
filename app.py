@@ -126,7 +126,12 @@ def after_request(response):
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    user = db.session.execute(db.Select(User).filter_by(
+        id=session["user_id"])).first()[0]
+    recording_number = len(user.recordings)
+    summaries = len(user.summaries)
+    transcripts = len(user.transcripts)
+    return render_template("index.html", user=user, recording_number=recording_number, summaries=summaries, transcripts=transcripts)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -319,15 +324,20 @@ def study_mode():
 def after_record():
     """Display summarization for latest recording"""
     if request.method == "GET":
-        if session["transcript_path"] != None and session["summary_path"] != None:
-            result = ""
-            with open(session["transcript_path"], "r", encoding="utf-8") as f:
-                reader = f.readlines()
-                for line in reader:
-                    result += line
+        result = ""
+        with open(session["transcript_path"], "r", encoding="utf-8") as f:
+            reader = f.readlines()
+            for line in reader:
+                result += line
+        if os.path.exists(session["summary_path"]):
+            summarize_text = ""
+            with open(session["summary_path"], "r", encoding="utf-8") as f:
+                summarize_text += f.readlines()[0]
+            return render_template("after_record.html", summarize_text=summarize_text, transcribe_text=result)
+        else:
             summarize_text = summarize_function(
                 result + "</s>", session["summary_path"])
-        return render_template("after_record.html", summarize_text=summarize_text, transcribe_text=result)
+            return render_template("after_record.html", summarize_text=summarize_text, transcribe_text=result)
     else:
         filename = request.form.get("file_name")
         new_summary = request.form.get("new_summary")
@@ -339,6 +349,7 @@ def after_record():
         if new_summary != "":
             with open(session["summary_path"], "w", encoding="utf-8") as f:
                 f.write(new_summary)
+
         return redirect("/display")
 
 
@@ -402,7 +413,14 @@ def quiz():
 def display_quiz():
     if request.method == "GET":
         return render_template("display_quiz.html", questions=session["questions"])
-    pass
+    else:
+        wrong = {}
+        for q in session["questions"]:
+            id = q["id"]
+            option = request.form.get(id)
+            if option != q["answer"]:
+                wrong[q["question"]] = (option, q["answer"])
+        return render_template("correction.html", wrong=wrong)
 
 
 if __name__ == "__main__":
