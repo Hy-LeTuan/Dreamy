@@ -7,7 +7,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 from helpers import login_required, apology, get_question, check_api_usage
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-import requests as rq
 
 # INITIALIZE DATABASE
 app = Flask(__name__)
@@ -356,7 +355,6 @@ def after_record():
 @app.route("/feeback")
 def feedback():
     """Allow users to send feedbacks"""
-    # remember to redirect to thank you page
     pass
 
 

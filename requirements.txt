@@ -1,11 +1,8 @@
 flask 
-tensorflow
-numpy 
-matplotlib
-seaborn 
-openai-whisper
-flask_session
-flask_sqlalchemy
-transformeres
-sentencepiece
+faster-whisper
+Flask-Session
+Flask-SQLAlchemy
+transformers
 torch
+requests
+colorama
