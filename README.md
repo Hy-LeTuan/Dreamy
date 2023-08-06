@@ -2,9 +2,9 @@
 
 -   Ở phần của dự án có chứa file "app.py", chạy flask run để chạy bình thường trên local server hoặc "flask run --debug" để thấy cách hoạt động rõ ràng hơn của website trên local server.
 
--   Có thể cài các dependencies của Python bằng lệnh "pip install -r 'requirements.txt" và có thể cài dependency của Javascript bằng lệnh "npm install" để cài các dependency có trong file "package.json"
+-   Có thể cài các dependencies của Python bằng lệnh "pip install -r 'requirements.txt" và có thể cài dependency của Javascript bằng lệnh "npm init -y" để khởi tạo npm rồi chạy "npm install" để cài các dependency có trong file "package.json"
 
--   Có account với username: "admin", password: "admin123" để mọi người có thể tham khảo một số file ghi âm cũng như tóm tắt.
+-   Có account với username: "admin2", password: "admin123" để mọi người có thể tham khảo một số file ghi âm cũng như tóm tắt.
 
 ## Các route của web
 
@@ -36,4 +36,4 @@
 
 1. API URL: "https://api.opexams.com"
 2. Để tạo câu hỏi, ta cần có API key mà nhóm đã cung cấp, tại thời điểm viết README (6/8/2023) thì API key sẽ còn 970 lần tạo câu hỏi.
-3. Để tạo câu hỏi, ta cần truyền vào nội dung để lấy câu hỏi về. Nội dung đó được lấy từ các file tóm tắt của người dùng, do các file tóm tắt sẽ là file mà các ý hàm súc và cô đọng nhất.
+3. Để tạo câu hỏi, ta cần truyền vào nội dung để lấy câu hỏi về. Nội dung đó được lấy từ các file tóm tắt của người dùng, do các file tóm tắt sẽ là file mà các ý hàm súc và cô đọng nhất. Ta cũng cần truyền vào loại câu hỏi, ngôn ngữ... Tất cả có thể được tìm thấy ở "https://opexams.com/questions-generator-api/"
