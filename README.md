@@ -34,6 +34,6 @@
 
 ## API tạo câu hỏi
 
-1. API url: "https://api.opexams.com"
+1. API URL: "https://api.opexams.com"
 2. Để tạo câu hỏi, ta cần có API key mà nhóm đã cung cấp, tại thời điểm viết README (6/8/2023) thì API key sẽ còn 970 lần tạo câu hỏi.
 3. Để tạo câu hỏi, ta cần truyền vào nội dung để lấy câu hỏi về. Nội dung đó được lấy từ các file tóm tắt của người dùng, do các file tóm tắt sẽ là file mà các ý hàm súc và cô đọng nhất.
