@@ -1,11 +1,11 @@
-from flask import Flask, request, render_template, redirect, flash, session, jsonify
+from flask import Flask, request, render_template, redirect, flash, url_for, session, jsonify
 import os
 import time
 from faster_whisper import WhisperModel
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
-from helpers import login_required, apology, get_question
+from helpers import login_required, apology, get_question, check_api_usage
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import requests as rq
 
@@ -349,9 +349,59 @@ def feedback():
     pass
 
 
-@app.route("/quiz")
+@app.route("/quiz", methods=["POST", "GET"])
 def quiz():
+    user = db.session.execute(db.Select(User).filter_by(
+        id=session["user_id"])).first()[0]
+    recordings = user.recordings
+    if request.method == "GET":
+        return render_template("quiz.html", records=recordings)
+    else:
+        question_type = request.form["question_type"]
+        selected_options = request.form.getlist("recordings")
 
+        # CHECK QUESTION TYPE
+        if question_type == "":
+            return apology("No question type selected, please try again", 403)
+
+        # CHECK SELECT OPTIONS
+        if selected_options == None:
+            return apology("No recordings selected, please try again", 403)
+
+        # GET SUMMARIES
+        summaries = db.session.execute(db.Select(Summary).filter(
+            Summary.id.in_(selected_options))).all()[0]
+        print(selected_options)
+        print(summaries)
+
+        # GET CONTEXT
+        context = ""
+        for summary in summaries:
+            with open(summary.sum_path, "r", encoding="utf-8") as f:
+                context += f.readlines()[0]
+
+        # CHECK API USAGE
+        api_usage = check_api_usage()
+        if "error" in api_usage:
+            return apology(f"Error: {api_usage['error']}", 403)
+        elif api_usage["creditsLeft"] <= 10:
+            return apology("Error, invalid credits for API, please wait for website to update API", 403)
+
+        # GET QUESTIONS
+        questions = get_question(context, question_type)
+
+        # CHECK QUESTION RESPONSE
+        if "error" in questions:
+            return apology(f"{questions['error']}", 403)
+        questions = questions["data"]
+        session["questions"] = questions
+        return redirect(url_for("display_quiz"))
+
+
+@app.route("/display_quiz", methods=["GET", "POST"])
+def display_quiz():
+    if request.method == "GET":
+        return render_template("display_quiz.html", questions=session["questions"])
     pass
 
 

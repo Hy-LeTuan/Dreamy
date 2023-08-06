@@ -1,0 +1,42 @@
+{% extends "layout.html" %} {% block title %} Quiz {% endblock %} {% block main
+%}
+<div class="quiz-surround-box">
+	<div class="mx-auto quiz-card">
+		<div class="quiz-title-box">
+			<h3 class="quiz-title">Choose files for quiz generation</h3>
+		</div>
+		<div class="container mx-auto mt-3">
+			<form action="/quiz" method="post">
+				<select name="recordings" id="recordings" class="form-select">
+					<option value="none" selected disabled hidden>
+						Select the recordings to test your skill
+					</option>
+					{% for rec in records %} {% if rec.filename != '' %}
+					<option value="{{ rec.id }}">{{ rec.filename }}</option>
+					{% else %}
+					<option value="{{ rec.id }}">Untitled recording</option>
+					{% endif %} {% endfor %}
+				</select>
+				<div class="container mt-3 mb-1">
+					<select
+						name="question_type"
+						id="question_type"
+						class="form-select">
+						<option value="none" selected disabled hidden>
+							Select your preferred question type
+						</option>
+						<option value="MCQ">Multiple choice question</option>
+						<option value="TF">True/False</option>
+					</select>
+				</div>
+				<div class="container mt-3 mb-3">
+					<input
+						class="btn btn-primary"
+						type="submit"
+						value="submit" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

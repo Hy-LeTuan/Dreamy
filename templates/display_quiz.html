@@ -1,0 +1,23 @@
+{% extends "layout.html" %} {% block title %} Display Quiz {% endblock %} {%
+block main %}
+<div class="display_quiz-container mx-auto">
+	<div class="display_quiz-top-card display_quiz-body">@HanoiAirline608</div>
+	<div class="display_quiz-body">
+		<form action="/display_quiz" class="form-control" method="post">
+			{% for q in questions %}
+			<div class="container">
+				<div class="container mt-2 mb-3">
+					<h3 class="question-title">{{ q["question"] }}</h3>
+				</div>
+				<div class="container">
+					<select name="{{ q['id'] }}"></select>
+				</div>
+			</div>
+			{% endfor %}
+			<div class="container btn btn-submit btn-primary">
+				<input type="submit" value="" />
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

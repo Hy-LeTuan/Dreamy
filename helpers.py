@@ -28,7 +28,7 @@ def check_api_usage():
     header = {
         "api-key": api_key
     }
-    response = requests.get(f"{url}/questions-generator/usage")
+    response = requests.get(f"{url}/questions-generator/usage", headers=header)
     response = response.json()
     return response
 
@@ -47,5 +47,6 @@ def get_question(context, question_type):
         "language": "Vietnamese"
     }
 
-    response = requests.post(headers=header, json=body).json()
+    response = requests.post(
+        f"{url}/questions-generator", headers=header, json=body).json()
     return response

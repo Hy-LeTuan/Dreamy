@@ -216,6 +216,17 @@ tbody tr:nth-of-type(odd) {
 	line-height: normal;
 }
 
+.quiz-title {
+	color: #fff;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: "Kavoon";
+	font-size: 2.25rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
 .my_folder-list {
 	color: #000 !important;
 	font-family: "Damion";
@@ -233,4 +244,58 @@ tbody tr:nth-of-type(odd) {
 	border-right: 6px solid #300f1d;
 	border-bottom-right-radius: 0.5rem;
 	border-bottom-left-radius: 0.5rem;
+}
+
+.quiz-card {
+	border-radius: 0.5rem;
+	border: 6px solid #000;
+	max-width: 30rem;
+}
+
+.quiz-title-box {
+	border-bottom: 6px solid #000;
+	max-height: 7rem;
+	background: #f6c5d6;
+}
+
+.quiz-surround-box {
+	width: 100%;
+	/* background: url("static/field.png"), lightgray 50% / cover no-repeat; */
+}
+
+.display_quiz-container {
+	max-width: 80rem;
+	border-radius: 55px;
+	border: 6px solid #300f1d;
+	background: #fff;
+}
+
+.display_quiz-top-card {
+	width: 100%;
+	flex-shrink: 0;
+	border-radius: 55px 55px 0px 0px;
+	border: 6px solid #300f1d;
+	background: #fd8a8a;
+	min-height: 3rem;
+}
+
+.question-title {
+	color: #300f1d;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: "Nunito";
+	font-size: 2rem;
+	font-style: normal;
+	font-weight: 800;
+	line-height: normal;
+}
+
+.display_quiz-body {
+	width: 100%;
+	background: #fff;
+}
+
+.display_quiz-question-box {
+	border: 2px solid #000;
+	border-radius: 55px;
 }
