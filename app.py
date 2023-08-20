@@ -66,7 +66,7 @@ with app.app_context():
 
 # AUDIO MODEL
 
-MODEL = WhisperModel("large-v2", device="cpu", compute_type="int8")
+MODEL = WhisperModel("large-v2", device="cuda", compute_type="float16")
 
 
 # INITIALIZE TRANSCRIPTION MODEL
