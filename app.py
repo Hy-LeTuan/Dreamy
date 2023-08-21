@@ -5,7 +5,7 @@ from faster_whisper import WhisperModel
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
-from helpers import login_required, apology, get_question, check_api_usage
+from helpers import login_required, apology, get_question, check_api_usage, check_login
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # INITIALIZE DATABASE

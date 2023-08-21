@@ -49,3 +49,7 @@ def get_question(context, question_type):
     response = requests.post(
         f"{url}/questions-generator", headers=header, json=body).json()
     return response
+
+
+def check_login():
+    return session.get("user_id") == None

@@ -5,25 +5,32 @@ document.addEventListener("DOMContentLoaded", () => {
 	const startRecording = document.querySelector("#start-recording");
 	const stopRecording = document.querySelector("#stop-recording");
 	const recordStatus = document.querySelector("#record-status");
+	const progressBar = document.querySelector("#progress-bar");
+	const recordingTime = document.querySelector("#recording-time");
 	let selectElement;
 	let selectedValue;
 	let recorder;
 	let chunks = [];
+	let startTime;
 
 	startRecording.addEventListener("click", () => {
 		navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-			let start = new Date();
 			recorder = new MediaRecorder(stream);
 			recorder.start();
 			recordStatus.innerHTML = "Recording...";
 			startRecording.disabled = true;
 			stopRecording.disabled = false;
 			chunks = [];
+			startTime = new Date();
 			recorder.addEventListener("dataavailable", (event) => {
 				chunks.push(event.data);
 			});
 			recorder.addEventListener("stop", () => {
-				let end = new Date();
+				const endTime = new Date();
+				const duration = (endTime - startTime) / 1000;
+				recordingTime.innerHTML = `Recording Duration: ${duration.toFixed(
+					2
+				)} seconds`;
 				recordStatus.innerHTML =
 					"Press submit, then please wait until you're being redirected";
 			});
@@ -46,28 +53,37 @@ document.addEventListener("DOMContentLoaded", () => {
 		selectedValue = selectElement.value;
 		if (chunks.length > 0) {
 			const audioBlob = new Blob(chunks);
-			sendAudioData(audioBlob, selectedValue);
+			uploadAudioData(audioBlob, selectedValue);
 		}
 	});
 
-	function sendAudioData(audioBlob, subject_value) {
+	function uploadAudioData(audioBlob, subjectValue) {
 		const formdata = new FormData();
 		formdata.append("audio", audioBlob, "recording.wav");
-		formdata.append("subject", subject_value);
-		fetch("/record", {
-			method: "POST",
-			body: formdata,
-			mode: "no-cors",
-		})
-			.then((response) => {
-				if (response.ok) {
-					response.json().then((data) => {
-						window.location.href = "/after_record";
-					});
-				} else {
-					window.location.href = "/apology";
-				}
-			})
-			.catch((error) => console.error("Error:", error));
+		formdata.append("subject", subjectValue);
+
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "/record", true);
+
+		xhr.upload.onprogress = (event) => {
+			if (event.lengthComputable) {
+				const percentComplete = (event.loaded / event.total) * 100;
+				progressBar.style.width = `${percentComplete}%`;
+			}
+		};
+
+		xhr.onload = () => {
+			if (xhr.status === 200) {
+				window.location.href = "/after_record";
+			} else {
+				window.location.href = "/apology";
+			}
+		};
+
+		xhr.send(formdata);
+	}
+	function getRecordingDuration() {
+		const durationInSeconds = parseInt(recordingDurationInput.value, 10);
+		return durationInSeconds * 1000; // Convert to milliseconds
 	}
 });
