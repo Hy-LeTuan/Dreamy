@@ -12,16 +12,22 @@ main %}
 			<div
 				class="d-flex align-items-center justify-content-center gap-sm-3">
 				<div class="container login-icon-box">
-					<img class="login-icon" src="static/dash.svg" alt="Dash" />
+					<img
+						class="login-icon"
+						src="static/images/dash.svg"
+						alt="Dash" />
 				</div>
 				<div class="container login-icon-box">
 					<img
 						class="login-icon"
-						src="static/folder.svg"
+						src="static/images/folder.svg"
 						alt="Folder" />
 				</div>
 				<div class="container login-icon-box">
-					<img class="login-icon" src="static/ex.svg" alt="X" />
+					<img
+						class="login-icon"
+						src="static/images/ex.svg"
+						alt="X" />
 				</div>
 			</div>
 		</div>
@@ -46,7 +52,8 @@ main %}
 						Stop Recording
 					</button>
 				</div>
-				<span id="record-status"></span>
+				<div class="mt-2"><span id="record-status"></span></div>
+				<div class=""><span id="recording-time"></span></div>
 				<div class="mb-2 form-group row">
 					<input
 						type="submit"
@@ -54,6 +61,14 @@ main %}
 						class="form-control mx-auto w-auto my-3" />
 				</div>
 			</form>
+		</div>
+		<div id="record-status"></div>
+		<div class="progress">
+			<div
+				id="progress-bar"
+				class="progress-bar progress-bar-striped progress-bar-animated"
+				role="progressbar"
+				style="width: 0"></div>
 		</div>
 	</div>
 </div>

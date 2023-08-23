@@ -18,7 +18,7 @@
 }
 
 .navbar-title {
-	font-size: 4rem;
+	font-size: 2.5rem;
 	font-weight: 400;
 	font-family: "Damion, Times New Roman";
 	color: #ffffff;
@@ -26,8 +26,8 @@
 }
 
 .dreamer-navbar-icon {
-	width: 5rem;
-	height: 5rem;
+	width: 3rem;
+	height: 3rem;
 }
 
 .footer-span {
@@ -92,7 +92,7 @@
 }
 
 .apology-container {
-	background: url(static/apology_background.png),
+	background: url(static/images/apology_background.png),
 		lightgray 50% / cover no-repeat;
 }
 
@@ -113,7 +113,7 @@
 
 .nav-item > .nav-link {
 	color: #fff !important;
-	font-family: "Damion";
+	font-family: "Damion, Times New Roman";
 	font-size: 1.5rem;
 	font-style: normal;
 	font-weight: 400;

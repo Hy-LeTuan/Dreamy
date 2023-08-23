@@ -5,7 +5,7 @@ from faster_whisper import WhisperModel
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
-from helpers import login_required, apology, get_question, check_api_usage, check_login
+from helpers import login_required, apology, get_question, check_api_usage, check_login, text_segment_with_tokens
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # INITIALIZE DATABASE
@@ -37,6 +37,7 @@ class User(db.Model):
     recordings = db.relationship("Recording", backref="user")
     transcripts = db.relationship("Transcript", backref="user")
     summaries = db.relationship("Summary", backref="user")
+    quizzes = db.relationship("Quiz", backref="user")
 
 
 class Recording(db.Model):
@@ -57,7 +58,14 @@ class Transcript(db.Model):
 class Summary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     subject = db.Column(db.String, nullable=False)
-    sum_path = db.Column(db.String, nullable=Flask)
+    sum_path = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+
+
+class Quiz(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String, nullable=False)
+    quiz_path = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
 
@@ -123,14 +131,18 @@ def after_request(response):
 
 
 @app.route("/")
-@login_required
 def index():
-    user = db.session.execute(db.Select(User).filter_by(
-        id=session["user_id"])).first()[0]
-    recording_number = len(user.recordings)
-    summaries = len(user.summaries)
-    transcripts = len(user.transcripts)
-    return render_template("index.html", user=user, recording_number=recording_number, summaries=summaries, transcripts=transcripts)
+    # chứa hình đại diện, tên tài khoản, gói sử dụng, email, mật khẩu.
+    login_status = check_login()
+    if login_status:
+        return render_template("index.html", login_status=login_status)
+    else:
+        user = db.session.execute(db.Select(User).filter_by(
+            id=session["user_id"])).first()[0]
+        recording_number = len(user.recordings)
+        summaries = len(user.summaries)
+        transcripts = len(user.transcripts)
+        return render_template("index.html", user=user, recording_number=recording_number, summaries=summaries, transcripts=transcripts, login_status=login_status)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -319,7 +331,7 @@ def study_mode():
     pass
 
 
-@app.route("/after_record", methods=["POST", "GET"])
+@app.route("/notes", methods=["POST", "GET"])
 def after_record():
     """Display summarization for latest recording"""
     if request.method == "GET":
