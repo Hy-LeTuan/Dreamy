@@ -1,0 +1,17 @@
+Trong những bài giảng này, chúng ta đã học được nhiều khái niệm và kỹ thuật quan trọng trong lĩnh vực Khoa học Máy tính. Dưới đây là một tóm tắt tổng quan bằng tiếng Việt:
+
+- GitHub là một nền tảng phổ biến để lưu trữ và chia sẻ mã nguồn.
+- Sửa đổi chung cho phép tương tác và phản hồi thời gian thực từ giáo viên và bạn bè.
+- Không khuyến khích chia sẻ các liên kết YouTube của công việc của người khác. Thay vào đó, sinh viên nên ghi lại và chia sẻ quá trình và kết quả của riêng mình.
+- Việc tài liệu hóa quá trình và mô tả thiết lập hệ thống và kết quả huấn luyện là quan trọng.
+- Thời hạn nộp bài vẫn được áp dụng.
+- Các chủ đề được đề cập trong bài giảng bao gồm trí tuệ tự nhiên, trí tuệ nhân tạo, trích xuất đặc trưng và biểu diễn.
+
+- Các thuật ngữ như tọa độ nhúng, công cụ lấy mẫu và so khớp, gom nhóm, hồi quy và phân loại đã được giới thiệu và giải thích.
+- Việc tối ưu hóa hàm trí tuệ trong máy tính yêu cầu điều chỉnh các tham số và áp dụng quy trình học máy.
+- Học máy có giám sát dựa trên việc cung cấp các cặp dữ liệu đầu vào và đầu ra tương ứng.
+- Chúng ta cần sáng tạo và tận dụng dữ liệu có sẵn và chuẩn bị sẵn sàng để áp dụng trí tuệ nhân tạo vào các lĩnh vực khác nhau của cuộc sống.
+- Trí tuệ nhân tạo có ảnh hưởng đến mọi khía cạnh trong cuộc sống hàng ngày và trở thành một nguồn năng lượng quan trọng.
+- Để thành công trong thế giới AI, chúng ta cần liên tục học tập và chuẩn bị.
+
+Những tóm tắt trên đây nhằm giúp sinh viên có thể sử dụng để ôn tập và chuẩn bị cho kỳ thi một cách hiệu quả.
