@@ -3,8 +3,8 @@ from flask import redirect, session
 from functools import wraps
 import requests
 import tiktoken
-api_key = "qtteFO3qd0O2HhcbTPeNu3B1qiqWJsN"
-url = "https://api.opexams.com"
+import openai
+import time
 
 
 def login_required(f):
@@ -26,6 +26,8 @@ def apology(message, code=400):
 
 
 def check_api_usage():
+    api_key = "qtteFO3qd0O2HhcbTPeNu3B1qiqWJsN"
+    url = "https://api.opexams.com"
     header = {
         "api-key": api_key
     }
@@ -36,6 +38,8 @@ def check_api_usage():
 
 def get_question(context, question_type):
     """Response is a list of dictionaries, taken from reponse["data"]"""
+    api_key = "qtteFO3qd0O2HhcbTPeNu3B1qiqWJsN"
+    url = "https://api.opexams.com"
     header = {
         "api-key": api_key,
     }
@@ -78,3 +82,48 @@ def text_segment_with_tokens(trans_path):
     with open(trans_path, "w", encoding="utf-8") as f:
         for chunk in chunk_list:
             f.write(f"{chunk}\n")
+
+
+def summarize(trans_path, length, sum_path, subject, user_role="user"):
+    api_key = "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"
+
+    with open(trans_path, "r", encoding="utf-8") as f:
+        conversation = [{"role": "system", "content": f"You are a helpful assistant that summarizes lesson transcripts for {user_role} in {subject} in Vietnamese. The summary's length must be {length}. You must also highlight important points of the transcript so that students can use the summary to perfectly understand the lesson without the need to re-read the transcript."}]
+        counter = 0
+
+        for line in f:
+            if counter >= 3:
+                time.sleep(61)
+                counter = 0
+            conversation.append({"role": "user", "content": line.strip()})
+            response = openai.ChatCompletion.create(
+                api_key=api_key,
+                model="gpt-3.5-turbo-16k",
+                messages=conversation,
+            )
+            assistant_reply = response.choices[0].message["content"]
+            conversation.pop()
+            conversation.append(
+                {"role": "assistant", "content": assistant_reply})
+            counter += 1
+
+        conversation.append(
+            {"role": "user", "content": "Can you now please link all of the summaires above into 1 big summary and write it in Vietnamese."})
+        response = openai.ChatCompletion.create(
+            api_key=api_key,
+            model="gpt-3.5-turbo-16k",
+            messages=conversation
+        )
+
+        with open(sum_path, "w", encoding="utf-8") as f:
+            f.write(response.choices[0].message["content"].strip())
+
+
+def write_summary(sum_path):
+    with open(sum_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                print(line)
+            else:
+                continue

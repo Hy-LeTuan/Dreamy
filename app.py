@@ -5,7 +5,7 @@ from faster_whisper import WhisperModel
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
-from helpers import login_required, apology, get_question, check_api_usage, check_login, text_segment_with_tokens
+from helpers import login_required, apology, get_question, check_api_usage, check_login, text_segment_with_tokens, summarize, write_summary
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # INITIALIZE DATABASE
@@ -32,6 +32,7 @@ Session(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    role = db.Column(db.String, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     recordings = db.relationship("Recording", backref="user")
@@ -331,24 +332,16 @@ def study_mode():
     pass
 
 
-@app.route("/notes", methods=["POST", "GET"])
+@app.route("/", methods=["POST", "GET"])
 def after_record():
     """Display summarization for latest recording"""
     if request.method == "GET":
-        result = ""
-        with open(session["transcript_path"], "r", encoding="utf-8") as f:
-            reader = f.readlines()
-            for line in reader:
-                result += line
-        if os.path.exists(session["summary_path"]):
-            summarize_text = ""
-            with open(session["summary_path"], "r", encoding="utf-8") as f:
-                summarize_text += f.readlines()[0]
-            return render_template("after_record.html", summarize_text=summarize_text, transcribe_text=result)
-        else:
-            summarize_text = summarize_function(
-                result + "</s>", session["summary_path"])
-            return render_template("after_record.html", summarize_text=summarize_text, transcribe_text=result)
+        transcribe_text = ""
+        if session.get("transcript_path") != None:
+            with open(session["transcript_path"], "r", encoding="utf-8") as f:
+                for line in f:
+                    transcribe_text += line
+        return render_template("summary.html", transcribe_text=transcribe_text)
     else:
         filename = request.form.get("file_name")
         new_summary = request.form.get("new_summary")
@@ -361,7 +354,7 @@ def after_record():
             with open(session["summary_path"], "w", encoding="utf-8") as f:
                 f.write(new_summary)
 
-        return redirect("/display")
+        return render_template("display_summary.html")
 
 
 @app.route("/feeback")
