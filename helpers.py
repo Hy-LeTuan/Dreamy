@@ -85,7 +85,7 @@ def text_segment_with_tokens(trans_path):
 
 
 def summarize(trans_path, length, sum_path, subject, user_role="user"):
-    api_key = "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"
+    api_key = "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"
 
     with open(trans_path, "r", encoding="utf-8") as f:
         conversation = [{"role": "system", "content": f"You are a helpful assistant that summarizes lesson transcripts for {user_role} in {subject} in Vietnamese. The summary's length must be {length}. You must also highlight important points of the transcript so that students can use the summary to perfectly understand the lesson without the need to re-read the transcript."}]
