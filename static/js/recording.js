@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		xhr.onload = () => {
 			if (xhr.status === 200) {
-				window.location.href = "/notes";
+				window.location.href = "/summary";
 			} else {
 				window.location.href = "/apology";
 			}

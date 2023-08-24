@@ -38,7 +38,7 @@
 }
 
 .footer-link {
-	color: #000;
+	color: #000 !important;
 	text-align: center;
 	font-family: "Baloo";
 	font-size: 25px;
@@ -81,17 +81,6 @@
 		lightgray 50% / cover no-repeat;
 }
 
-.login-title {
-	color: #300f1d;
-	text-align: center;
-	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-	font-family: Lemon;
-	font-size: 40px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: normal;
-}
-
 .bg-brown-light {
 	background-color: #dad0c2;
 }
@@ -107,7 +96,7 @@
 
 /* RECORD  */
 
-.audio-title {
+.page-title {
 	color: #3f1d38;
 	text-align: center;
 	font-family: "Grandstander", cursive;
@@ -117,11 +106,24 @@
 	line-height: normal;
 }
 
+.recording-button > a {
+	color: #fff;
+	font-style: normal;
+	text-decoration: none;
+}
+
+.recording-button > a:hover,
+a:visited {
+	font-style: normal;
+	color: #fff;
+	text-decoration: none;
+}
+
 .recording-button {
 	border-radius: 10px;
 	background: #ff9b9b;
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-	color: #fff;
+	color: #fff !important;
 	text-align: center;
 	font-family: "Baloo";
 	font-size: 1.5rem;
@@ -163,11 +165,6 @@
 	text-align: center;
 }
 
-.after_record-span {
-	font-size: 1rem;
-	font-weight: 200;
-}
-
 .submit-button {
 	border-radius: 10px;
 	background: #cbffa9;
@@ -197,6 +194,42 @@
 }
 
 /* END RECORD */
+
+/* SUMMARY */
+.summary {
+	min-width: 30rem;
+	max-width: 40rem;
+	min-height: 10rem;
+	flex-shrink: 0;
+	border-radius: 20px;
+	border: 5px solid #300f1d;
+	background: #fff;
+	color: #3f1d38;
+	text-align: left;
+	font-family: "Grandstander", cursive;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	text-decoration-line: underline;
+}
+
+.select-droplist {
+	background-color: #95bdff;
+	min-width: 30rem;
+	max-width: 40rem;
+	color: #000;
+	border-radius: 20px;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: "Baloo" cursive;
+	font-size: 1rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+/* END */
 
 table {
 	background-color: transparent;
@@ -391,4 +424,19 @@ tbody tr:nth-of-type(odd) {
 
 .progress {
 	max-width: 30rem;
+}
+
+.text-input-small {
+	border-radius: 10px;
+	border: 5px solid #300f1d;
+	background: #fff;
+	width: 12rem;
+	height: 2.5rem;
+	font-size: 1rem;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: "Baloo";
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
 }

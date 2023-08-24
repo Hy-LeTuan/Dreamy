@@ -1,0 +1,32 @@
+{% extends "layout.html" %} {% block title %} Summary {% endblock %} {% block
+main %}
+<h3 class="page-title">Dịch từ ghi âm:</h3>
+<form action="after_record" method="post">
+	<input
+		class="mt-2 mb-2 text-input-small"
+		type="text"
+		name="file_name"
+		placeholder="Điền tên file" />
+	<div class="mt-4">
+		<select name="length" id="" class="select-droplist">
+			<option value="none" selected disabled hidden>
+				Chọn độ dài tóm tắt
+			</option>
+			<option value="small">Small</option>
+			<option value="medium">Medium</option>
+			<option value="large">Large</option>
+		</select>
+	</div>
+	<div class="summary mx-auto mt-4 p-sm-3">
+		<p class="transcribe-text">{{ transcribe_text }}</p>
+	</div>
+	<div class="button-container mt-4 mx-auto">
+		<button class="recording-button">
+			<a href="/recording" class="non-style-link">Ghi âm mới</a>
+		</button>
+		<button class="submit-button">
+			<input type="submit" value="Submit" class="submit-input" />
+		</button>
+	</div>
+</form>
+{% endblock %}

@@ -332,8 +332,8 @@ def study_mode():
     pass
 
 
-@app.route("/", methods=["POST", "GET"])
-def after_record():
+@app.route("/summary", methods=["POST", "GET"])
+def summary():
     """Display summarization for latest recording"""
     if request.method == "GET":
         transcribe_text = ""
@@ -341,26 +341,31 @@ def after_record():
             with open(session["transcript_path"], "r", encoding="utf-8") as f:
                 for line in f:
                     transcribe_text += line
-        return render_template("summary.html", transcribe_text=transcribe_text)
+            return render_template("summary_login.html", transcribe_text=transcribe_text)
+        else:
+            return render_template("summary_not_login.html")
     else:
-        filename = request.form.get("file_name")
-        new_summary = request.form.get("new_summary")
-        if filename != "":
+        if session.get("transcript_path") != None and session.get("summary_path") != None:
+            filename = request.form.get("file_name")
+            length = request.form.get("length")
             recording = db.session.execute(
                 db.Select(Recording).filter_by(path=session["recording_path"])).first()[0]
-            recording.filename = filename
-            db.session.commit()
-        if new_summary != "":
-            with open(session["summary_path"], "w", encoding="utf-8") as f:
-                f.write(new_summary)
+            user = db.session.execute(
+                db.Select(User).filter_by(id=session["id"])).first()[0]
+            if filename != "":
+                recording.filename = filename
+                db.session.commit()
+            summarize(session["transcript_path"],
+                      length, session["summary_path"], recording.subject, user.role)
+            return redirect("display_summary", summary_file_path=session["summary_path"])
 
-        return render_template("display_summary.html")
 
-
-@app.route("/feeback")
-def feedback():
-    """Allow users to send feedbacks"""
-    pass
+@app.route("/display_summary", methods=["POST", "GET"])
+def display_summary():
+    if request.mehtod == "GET":
+        summary_file_path = request.args.get("summary_file_path")
+    else:
+        pass
 
 
 @app.route("/quiz", methods=["POST", "GET"])
