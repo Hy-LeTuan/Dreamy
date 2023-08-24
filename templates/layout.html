@@ -8,22 +8,12 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Poppins:wght@500&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Damion&family=Grandstander:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
 			rel="stylesheet" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Poppins:wght@500&display=swap"
-			rel="stylesheet" />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Lemon&family=Poppins:wght@500&display=swap"
-			rel="stylesheet" />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Kavoon&family=Poppins:wght@500&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Grandstander:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
 			rel="stylesheet" />
 		<link rel="stylesheet" href="static\css\styles.css" />
 		<link rel="stylesheet" href="static/css/bootstrap.min.css" />
@@ -44,24 +34,28 @@
 					</div>
 				</div>
 				{% if session.get("user_id") != None %}
-				<ul class="navbar-nav ms-auto">
+				<ul class="navbar-nav mx-auto">
 					<li class="nav-item me-2">
-						<a class="nav-link" href="/my_folder">My folder</a>
+						<a class="nav-link" href="/">Hành trình</a>
 					</li>
 					<li class="nav-item me-2">
-						<a class="nav-link" href="/record">Record</a>
+						<a class="nav-link" href="/record">Ghi âm</a>
 					</li>
 					<li class="nav-item me-2">
-						<a class="nav-link" href="/display">Display</a>
+						<a href="/summary" class="nav-link">Tóm tắt</a>
 					</li>
 					<li class="nav-item me-2">
 						<a class="nav-link" href="/quiz">Quiz</a>
 					</li>
 					<li class="nav-item me-2">
-						<a href="/summary" class="nav-link">Create notes</a>
+						<a class="nav-link" href="/profile">Profile</a>
 					</li>
+				</ul>
+				<ul class="navbar-nav ms-auto">
 					<li class="nav-item">
-						<a href="/logout" class="nav-link">Log Out</a>
+						<button class="logout-button">
+							<a href="/logout" class="nav-link">Log Out</a>
+						</button>
 					</li>
 				</ul>
 				{% else %}
@@ -82,28 +76,25 @@
 		<footer
 			class="text-center container-fluid nav-background-light navbar fixed-bottom">
 			<div
-				class="container-fluid justify-content-center align-items-center text-center mb-3">
-				<span class="footer-span">Follow us on</span>
-			</div>
-			<div
 				class="container-fluid d-flex align-items-center gap-sm-5 justify-content-center">
-				<ul class="list-inline mr-2">
+				<ul class="list-inline">
 					<li class="list-inline-item me-3">
-						<img
-							src="static/images/facebook.svg"
-							alt="Facebook icon" />
+						<a href="" class="footer-link">Cookies</a>
 					</li>
 					<li class="list-inline-item me-3">
-						<img
-							src="static/images/instagram.svg"
-							alt="Instagram icon" />
+						<a href="" class="footer-link">Liên hệ</a>
 					</li>
 					<li class="list-inline-item">
-						<img
-							src="static/images/location.svg"
-							alt="Location icon" />
+						<a href="" class="footer-link">Trợ giúp</a>
+					</li>
+					<li class="list-inline-item">
+						<a href="" class="footer-link">Công ty</a>
 					</li>
 				</ul>
+			</div>
+			<div
+				class="container-fluid justify-content-center align-items-center text-center">
+				<span class="footer-span">@HanoiAirline</span>
 			</div>
 		</footer>
 	</body>

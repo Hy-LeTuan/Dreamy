@@ -1,10 +1,10 @@
-.nav-background-light {
-	background-color: #aae3e2;
+@font-face {
+	font-family: "Baloo";
+	src: url("baloo.ttf") format("truetype");
 }
 
-.login-text {
-	font-size: 2rem;
-	color: #ffffff;
+.nav-background-light {
+	background: #b0daff;
 }
 
 .bg-blue-light {
@@ -20,7 +20,7 @@
 .navbar-title {
 	font-size: 2.5rem;
 	font-weight: 400;
-	font-family: "Damion, Times New Roman";
+	font-family: "Damion", cursive;
 	color: #ffffff;
 	margin-left: 1rem;
 }
@@ -37,34 +37,19 @@
 	font-weight: 200;
 }
 
-.container-form {
-	border: 4px solid #000 !important;
-	border-radius: 0.5rem !important;
+.footer-link {
+	color: #000;
+	text-align: center;
+	font-family: "Baloo";
+	font-size: 25px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	text-decoration-line: underline;
 }
 
 #blue-login-bar {
 	min-height: 2.5rem;
-}
-
-.login-text {
-	font-family: "Indie Flower";
-}
-
-.login-icon-box {
-	display: flex;
-	border-radius: 10px;
-	border: 4px solid #300f1d;
-	background: #fff;
-	max-height: 2.5rem;
-	min-height: 2rem;
-	text-align: center;
-	align-items: center;
-}
-
-.login-icon {
-	max-height: 2rem;
-	max-width: 2rem;
-	display: inline-block;
 }
 
 .apology-title {
@@ -113,49 +98,105 @@
 
 .nav-item > .nav-link {
 	color: #fff !important;
-	font-family: "Damion, Times New Roman";
+	font-family: "Baloo", sans-serif;
 	font-size: 1.5rem;
 	font-style: normal;
 	font-weight: 400;
 	line-height: normal;
 }
 
+/* RECORD  */
+
 .audio-title {
-	color: #000;
+	color: #3f1d38;
 	text-align: center;
-	font-family: "Damion";
-	font-size: 4rem;
+	font-family: "Grandstander", cursive;
+	font-size: 3.125rem;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+}
+
+.recording-button {
+	border-radius: 10px;
+	background: #ff9b9b;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	color: #fff;
+	text-align: center;
+	font-family: "Baloo";
+	font-size: 1.5rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	min-width: 15rem;
+	min-height: 4rem;
+	color: #fff;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.recording-button:disabled {
+	background: #fde5e5;
+}
+
+.form-name-input {
+	border-radius: 10px;
+	border: 5px solid #300f1d;
+	background: #fff;
+	width: 26.5625rem;
+	height: 3.6875rem;
+	font-size: 1.5em;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: "Baloo";
 	font-style: normal;
 	font-weight: 400;
 	line-height: normal;
 }
 
-.recording-button {
-	border-radius: 0.5rem;
-	background-color: #fff;
-}
-
-#pink-login-bar {
-	min-height: 3rem;
-	background: #f6c5d6;
-}
-
-.record-container {
-	max-width: 60rem !important;
-}
-
-.after_record-container {
-	max-width: 60rem;
-}
-
-.after_record-input {
-	min-width: 4rem;
+.button-container {
+	display: flex;
+	max-width: 30rem;
+	justify-content: center;
+	gap: 3rem;
+	align-items: center;
+	text-align: center;
 }
 
 .after_record-span {
 	font-size: 1rem;
 	font-weight: 200;
 }
+
+.submit-button {
+	border-radius: 10px;
+	background: #cbffa9;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	min-width: 15rem;
+	min-height: 4rem;
+}
+
+.submit-input {
+	color: #fff;
+	background: none;
+	border: none;
+	font-size: 1.5em;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: "Baloo";
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+#start-recording {
+	background: url("../images/microphone.png");
+	min-height: 8rem;
+	min-width: 8rem;
+	border-style: none;
+}
+
+/* END RECORD */
 
 table {
 	background-color: transparent;
@@ -335,4 +376,19 @@ tbody tr:nth-of-type(odd) {
 	font-style: normal;
 	font-weight: 400;
 	line-height: normal;
+}
+
+.logout-button {
+	border-radius: 20px;
+	background: #fff19e;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+/* UTILITY */
+.no-border {
+	border-style: none;
+}
+
+.progress {
+	max-width: 30rem;
 }

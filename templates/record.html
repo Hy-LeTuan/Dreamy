@@ -1,75 +1,35 @@
 {% extends "layout.html" %} {% block title %} Record {% endblock %} {% block
 main %}
-<div class="container mx-auto max-w-md record-container">
-	<h3 class="audio-title">DREAMY MODE</h3>
-	<div class="container-form">
+<h3 class="audio-title">Ghi âm</h3>
+<div class="container-form">
+	<form action="/record" class="">
+		<input
+			type="text"
+			name="subject"
+			id="subject"
+			class="mx-auto form-name-input text-center mt-2"
+			placeholder="Thư mục của file là" />
+		<div class="container mt-4">
+			<button id="start-recording" class=""></button>
+		</div>
+		<div class="mt-2"><span id="record-status"></span></div>
+		<div class=""><span id="recording-time"></span></div>
+		<div class="button-container mt-4 mx-auto">
+			<button id="stop-recording" disabled class="recording-button">
+				Kết thúc ghi âm
+			</button>
+			<button class="submit-button">
+				<input type="submit" value="Submit" class="submit-input" />
+			</button>
+		</div>
+	</form>
+	<div id="record-status"></div>
+	<div class="progress mt-5 mx-auto">
 		<div
-			class="container d-flex justify-content-between align-items-center bg-blue-light flex-shrink-0"
-			id="pink-login-bar">
-			<div>
-				<span class="login-text">@HanoiAirline608</span>
-			</div>
-			<div
-				class="d-flex align-items-center justify-content-center gap-sm-3">
-				<div class="container login-icon-box">
-					<img
-						class="login-icon"
-						src="static/images/dash.svg"
-						alt="Dash" />
-				</div>
-				<div class="container login-icon-box">
-					<img
-						class="login-icon"
-						src="static/images/folder.svg"
-						alt="Folder" />
-				</div>
-				<div class="container login-icon-box">
-					<img
-						class="login-icon"
-						src="static/images/ex.svg"
-						alt="X" />
-				</div>
-			</div>
-		</div>
-		<div class="container mx-auto">
-			<form action="/record" class="form-control">
-				<div class="mb-2 form-group row">
-					<input
-						type="text"
-						name="subject"
-						id="subject"
-						class="form-control mx-auto w-auto my-3"
-						placeholder="Enter your subject" />
-				</div>
-				<div>
-					<button id="start-recording" class="recording-button">
-						Start Recording
-					</button>
-					<button
-						id="stop-recording"
-						disabled
-						class="recording-button">
-						Stop Recording
-					</button>
-				</div>
-				<div class="mt-2"><span id="record-status"></span></div>
-				<div class=""><span id="recording-time"></span></div>
-				<div class="mb-2 form-group row">
-					<input
-						type="submit"
-						value="Submit"
-						class="form-control mx-auto w-auto my-3" />
-				</div>
-			</form>
-		</div>
-		<div id="record-status"></div>
-		<div class="progress">
-			<div
-				id="progress-bar"
-				class="progress-bar progress-bar-striped progress-bar-animated"
-				role="progressbar"
-				style="width: 0"></div>
-		</div>
+			id="progress-bar"
+			class="progress-bar progress-bar-striped progress-bar-animated"
+			role="progressbar"
+			style="width: 0"></div>
 	</div>
 </div>
 {% endblock %}
