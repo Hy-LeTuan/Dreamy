@@ -108,7 +108,7 @@ def summarize(trans_path, length, sum_path, subject, user_role="user"):
             counter += 1
 
         conversation.append(
-            {"role": "user", "content": "Can you now please link all of the summaires above into 1 big summary and write it in Vietnamese."})
+            {"role": "user", "content": "Can you please link all of the summaries above into 1 big summary and write it in Vietnamese."})
         response = openai.ChatCompletion.create(
             api_key=api_key,
             model="gpt-3.5-turbo-16k",
