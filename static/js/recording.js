@@ -48,19 +48,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	form.addEventListener("submit", (event) => {
 		event.preventDefault();
-
-		selectElement = document.getElementById("subject");
+		selectElement = document.getElementById("topic");
 		selectedValue = selectElement.value;
+		filenameValue = document.getElementById("filename").value;
+		folderValue = document.getElementById("folder").value;
 		if (chunks.length > 0) {
 			const audioBlob = new Blob(chunks);
 			uploadAudioData(audioBlob, selectedValue);
 		}
 	});
 
-	function uploadAudioData(audioBlob, subjectValue) {
+	function uploadAudioData(
+		audioBlob,
+		subjectValue,
+		filenameValue,
+		folderValue
+	) {
 		const formdata = new FormData();
 		formdata.append("audio", audioBlob, "recording.wav");
-		formdata.append("subject", subjectValue);
+		formdata.append("topic", subjectValue);
+		formdata.append("filename", filenameValue);
+		formdata.append("folder", folderValue);
 
 		const xhr = new XMLHttpRequest();
 		xhr.open("POST", "/record", true);

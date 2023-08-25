@@ -1,70 +1,42 @@
 {% extends "layout.html" %} {% block title %} Login {% endblock %} {% block main
 %}
-<div class="container mx-auto max-w-md">
-	<div class="container-form">
-		<div
-			class="container d-flex justify-content-between align-items-center bg-blue-light flex-shrink-0"
-			id="blue-login-bar">
-			<div>
-				<span class="login-text">@HanoiAirline608</span>
-			</div>
-			<div
-				class="d-flex align-items-center justify-content-center gap-sm-3">
-				<div class="container login-icon-box">
-					<img
-						class="login-icon"
-						src="static/images/dash.svg"
-						alt="Dash" />
-				</div>
-				<div class="container login-icon-box">
-					<img
-						class="login-icon"
-						src="static/images/folder.svg"
-						alt="Folder" />
-				</div>
-				<div class="container login-icon-box">
-					<img
-						class="login-icon"
-						src="static/images/ex.svg"
-						alt="X" />
-				</div>
-			</div>
+<div class="container-form-old mx-auto">
+	<div class="top-login-bar"></div>
+	<div class="form-body-container">
+		<div class="mx-auto mt-1 mb-0">
+			<span class="form-title">Đăng nhập</span>
 		</div>
-		<div class="container">
-			<div class="mx-auto">
-				<span class="login-title">GET READY AND START DREAMING</span>
+		<form action="/login" method="post" class="form-control">
+			<div class="mb-3 form-row">
+				<div class="label">Tên đăng nhập:</div>
+				<input
+					autocomplete="off"
+					autofocus
+					class="form-control me-auto w-auto mt-2"
+					id="username"
+					name="username"
+					placeholder="Username"
+					type="text"
+					maxlength="20" />
 			</div>
-			<form action="/login" method="post" class="form-control">
-				<div class="mb-5 form-group row">
-					<input
-						autocomplete="off"
-						autofocus
-						class="form-control mx-auto w-auto my-3"
-						id="username"
-						name="username"
-						placeholder="Username"
-						type="text"
-						maxlength="20" />
-				</div>
-				<div class="mb-4 from-group row mx-auto">
-					<input
-						class="form-control mx-auto w-auto"
-						id="password"
-						name="password"
-						placeholder="Password"
-						type="password"
-						maxlength="50" />
-				</div>
-				<button class="btn btn-primary mb-3" type="submit">
-					<span class="login-text">Log In</span>
-				</button>
-			</form>
-			<div class="mb-3 d-flex justify-content-center mt-3">
-				<img src="static/images/heart.svg" alt="" />
-				<a href="/reset" class="nav-link"
-					>Forget password or username - need some help?</a
-				>
+			<div class="mb-3 form-row">
+				<div class="label">Mật khẩu:</div>
+				<input
+					class="form-control me-auto mt-2 w-auto"
+					id="password"
+					name="password"
+					placeholder="Password"
+					type="password"
+					maxlength="50" />
 			</div>
+			<button class="btn btn-primary mb-3 me-auto" type="submit">
+				<span class="login-text">Đăng nhập</span>
+			</button>
+		</form>
+		<div
+			class="mb-2 d-flex justify-content-center me-auto gap-sm-1 align-items-center">
+			<img src="static/images/heart.svg" alt="" />
+			<a href="/reset" class="form-link">Quên mật khẩu?</a>
 		</div>
 	</div>
 </div>

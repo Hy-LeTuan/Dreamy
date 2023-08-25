@@ -1,0 +1,13 @@
+{% extends "layout.html" %} {% block title %} Summary {% endblock %} {% block
+main %}
+<h3 class="page-title">Chọn từ file ghi âm cũ</h3>
+<form action="/summary">
+	<h3 class="page-subtitle">hoặc điền nội dung cần tóm tắt</h3>
+	<div class="summary mx-auto mt-3">
+		<textarea
+			name="content"
+			class="summary-input"
+			placeholder="Nhập nội dung cần tóm tắt"></textarea>
+	</div>
+</form>
+{% endblock %}

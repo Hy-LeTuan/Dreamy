@@ -1,5 +1,5 @@
 {% extends "layout.html" %} {% block title %} Homepage {% endblock %} {% block
-main %} {% if login_status %} {% else %}
+main %} {% if confirmation %}
 <div class="container-fluid">
 	<h3 class="homepage-title">Homepage</h3>
 	<div class="container homepage-box mt-3">
@@ -23,4 +23,6 @@ main %} {% if login_status %} {% else %}
 		</div>
 	</div>
 </div>
+{% else %}
+<p>Hello</p>
 {% endif %} {% endblock %}

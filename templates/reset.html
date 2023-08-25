@@ -1,20 +1,24 @@
 {% extends "layout.html" %} {% block title %} Reset {% endblock %} {% block main
 %}
-<div class="container-fluid mx-auto">
-	<div class="after_record-container mx-auto">
-		<form action="/reset" method="post">
-			<div class="container mx-auto">
-				<h2 class="login-title mb-3">Reset password</h2>
+<div class="container-form-old mx-auto">
+	<div class="top-login-bar"></div>
+	<div class="form-body-container">
+		<div class="mx-auto mt-1 mb-0">
+			<span class="form-title">CÀI LẠI MẬT KHẨU</span>
+		</div>
+		<form action="/reset" method="post" class="form-control">
+			<div class="mb-3 form-row">
+				<div class="label">Mật khẩu mới:</div>
+				<input
+					class="form-control me-auto w-auto mt-2"
+					type="text"
+					name="new_password"
+					autofocus
+					placeholder="Mật khẩu mới" />
 			</div>
-			<input
-				class="after_record-input mb-2"
-				type="text"
-				name="new_password"
-				autofocus
-				placeholder="Enter new password" />
-			<div class="container mt-3">
-				<input type="submit" value="Set file name" />
-			</div>
+			<button class="btn btn-primary mb-3 me-auto" type="submit">
+				<span>Tiếp tục</span>
+			</button>
 		</form>
 	</div>
 </div>

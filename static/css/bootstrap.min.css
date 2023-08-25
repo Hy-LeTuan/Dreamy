@@ -2628,12 +2628,20 @@ fieldset:disabled .btn {
 }
 .btn-primary {
 	color: #fff;
-	background-color: #95bdff;
+	background-color: #d8ffd8;
 	border-color: #95bdff;
+	color: #fff;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: Baloo;
+	font-size: 1.5rem !important;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
 }
 .btn-primary:hover {
 	color: #fff;
-	background-color: #0b5ed7;
+	background-color: #76fa76;
 	border-color: #0a58ca;
 }
 .btn-check:focus + .btn-primary,

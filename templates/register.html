@@ -1,65 +1,53 @@
 {% extends "layout.html" %} {% block title %} Register {% endblock %} {% block
 main %}
-<div class="container mx-auto max-w-md">
-	<div class="container-form">
-		<div
-			class="container d-flex justify-content-between align-items-center bg-brown-light flex-shrink-0"
-			id="blue-login-bar">
-			<div>
-				<span class="login-text">@HanoiAirline608</span>
-			</div>
-			<div
-				class="d-flex align-items-center justify-content-center gap-sm-3">
-				<div class="container login-icon-box">
-					<img
-						class="login-icon"
-						src="static/images/dash.svg"
-						alt="Dash" />
-				</div>
-				<div class="container login-icon-box">
-					<img
-						class="login-icon"
-						src="static/images/folder.svg"
-						alt="Folder" />
-				</div>
-				<div class="container login-icon-box">
-					<img
-						class="login-icon"
-						src="static/images/ex.svg"
-						alt="X" />
-				</div>
-			</div>
+<div class="container-form-old mx-auto">
+	<div class="top-login-bar"></div>
+	<div class="form-body-container">
+		<div class="mx-auto mt-1 mb-0">
+			<span class="form-title">ĐĂNG KÍ THÀNH VIÊN</span>
 		</div>
-		<div class="container">
-			<div class="mx-auto">
-				<span class="login-title">BECOME A DREAMER...</span>
+		<form action="/register" method="post" class="form-control">
+			<div class="mb-3 form-row">
+				<div class="label">Tên tài khoản của bạn:</div>
+				<input
+					autocomplete="off"
+					autofocus
+					class="form-control me-auto w-auto mt-2"
+					id="username"
+					name="username"
+					placeholder="Tên tài khoản"
+					type="text"
+					maxlength="20" />
 			</div>
-			<form action="/register" method="post" class="form-control">
-				<div class="mb-5 form-group row">
-					<input
-						autocomplete="off"
-						autofocus
-						class="form-control mx-auto w-auto my-3"
-						id="username"
-						name="username"
-						placeholder="Username"
-						type="text"
-						maxlength="20" />
-				</div>
-				<div class="mb-4 from-group row mx-auto">
-					<input
-						class="form-control mx-auto w-auto"
-						id="password"
-						name="password"
-						placeholder="Password"
-						type="password"
-						maxlength="50" />
-				</div>
-				<button class="btn btn-primary mb-3" type="submit">
-					<span>Continue</span>
-				</button>
-			</form>
-		</div>
+			<div class="mb-3 form-row">
+				<div class="label">Mật khẩu của bạn:</div>
+				<input
+					class="form-control me-auto w-auto"
+					id="password"
+					name="password"
+					placeholder="Mật khẩu"
+					type="password"
+					maxlength="50" />
+			</div>
+			<div class="mb-4 form-row">
+				<div class="label">Bạn là:</div>
+				<select
+					name="role"
+					id=""
+					class="form-select width-limit-13 me-auto">
+					<option value="none" disabled selected hidden>
+						Vai trò
+					</option>
+					<option value="researcher">Researcher</option>
+					<option value="teacher">Teacher</option>
+					<option value="undergraduate">Undergraduate</option>
+					<option value="student">Student</option>
+				</select>
+			</div>
+			<button class="btn btn-primary mb-3 me-auto" type="submit">
+				<span>Tiếp tục</span>
+			</button>
+		</form>
 	</div>
 </div>
 

@@ -48,8 +48,15 @@
 	text-decoration-line: underline;
 }
 
-#blue-login-bar {
-	min-height: 2.5rem;
+.top-login-bar {
+	min-height: 4rem;
+	width: 100%;
+	background-color: #d8ffd8;
+	border-top: solid 6px #300f1d;
+	border-right: solid 6px #300f1d;
+	border-left: solid 6px #300f1d;
+	border-top-left-radius: 55px;
+	border-top-right-radius: 55px;
 }
 
 .apology-title {
@@ -145,9 +152,9 @@ a:visited {
 	border-radius: 10px;
 	border: 5px solid #300f1d;
 	background: #fff;
-	width: 26.5625rem;
-	height: 3.6875rem;
-	font-size: 1.5em;
+	width: 13rem;
+	height: 2.5rem;
+	font-size: 1.25rem;
 	text-align: center;
 	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	font-family: "Baloo";
@@ -199,8 +206,7 @@ a:visited {
 .summary {
 	min-width: 30rem;
 	max-width: 40rem;
-	min-height: 10rem;
-	flex-shrink: 0;
+	height: 10rem;
 	border-radius: 20px;
 	border: 5px solid #300f1d;
 	background: #fff;
@@ -212,6 +218,19 @@ a:visited {
 	font-weight: 400;
 	line-height: normal;
 	text-decoration-line: underline;
+	overflow: hidden;
+}
+
+.summary-input {
+	width: 100%;
+	height: 100%;
+	resize: none;
+	border: none;
+	outline: none;
+	padding: 10px;
+	box-sizing: border-box;
+	overflow-y: auto;
+	white-space: normal;
 }
 
 .select-droplist {
@@ -438,5 +457,83 @@ tbody tr:nth-of-type(odd) {
 	font-family: "Baloo";
 	font-style: normal;
 	font-weight: 400;
+	line-height: normal;
+}
+
+.container-form-old {
+	max-width: 60rem;
+	min-width: 30rem;
+	max-height: 34rem;
+	min-height: 30rem;
+}
+
+.form-title {
+	color: #300f1d;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: Baloo, cursive;
+	font-size: 2.25rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.form-body-container {
+	background-color: #fff;
+	border-bottom-left-radius: 55px;
+	border-bottom-right-radius: 55px;
+	border: 6px solid #300f1d;
+}
+
+.form-body-container > form {
+	border-bottom-left-radius: 55px !important;
+	border-bottom-right-radius: 55px !important	;
+}
+
+.custom-form-select {
+	background-color: #d8ffd8;
+	border-color: #a1d5b8;
+	color: #336633;
+}
+
+.width-limit-13 {
+	max-width: 13rem !important;
+}
+
+.form-row {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8rem;
+}
+
+.label {
+	color: #300f1d;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: Baloo;
+	font-size: 1.2rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	width: 14rem;
+	flex-shrink: 0;
+}
+
+.form-link {
+	color: #7a9a5d !important;
+}
+
+.form-link:hover {
+	color: #435334 !important;
+}
+
+.page-subtitle {
+	color: #3f1d38;
+	text-align: center;
+	font-family: "Grandstander", cursive;
+	font-size: 2.5rem;
+	font-style: normal;
+	font-weight: 700;
 	line-height: normal;
 }

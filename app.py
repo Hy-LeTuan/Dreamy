@@ -32,7 +32,7 @@ Session(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # role = db.Column(db.String, nullable=False)
+    role = db.Column(db.String, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     recordings = db.relationship("Recording", backref="user")
@@ -43,29 +43,32 @@ class User(db.Model):
 
 class Recording(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
-    filename = db.Column(db.String)
+    filename = db.Column(db.String, nullable=False)
     path = db.Column(db.String, nullable=False)
-    subject = db.Column(db.String, nullable=False)
+    topic = db.Column(db.String, nullable=False)
+    folder = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
 
 class Transcript(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
-    subject = db.Column(db.String, nullable=False)
+    filename = db.Column(db.String, nullable=False)
+    folder = db.Column(db.String, nullable=False)
+    topic = db.Column(db.String, nullable=False)
     trans_path = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
 
 class Summary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    subject = db.Column(db.String, nullable=False)
+    topic = db.Column(db.String, nullable=False)
     sum_path = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
 
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    subject = db.Column(db.String, nullable=False)
+    topic = db.Column(db.String, nullable=False)
     quiz_path = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
@@ -76,39 +79,6 @@ with app.app_context():
 # AUDIO MODEL
 
 MODEL = WhisperModel("large-v2", device="cuda", compute_type="float16")
-
-
-# INITIALIZE TRANSCRIPTION MODEL
-
-SUM_MODEL_TOKENIZER = AutoTokenizer.from_pretrained(
-    "VietAI/vit5-base-vietnews-summarization")
-SUM_MODEL = AutoModelForSeq2SeqLM.from_pretrained(
-    "VietAI/vit5-base-vietnews-summarization")
-SUM_MODEL.to("cpu")
-
-
-# SUMMARIZE TEXT
-
-def summarize_function(sentence, path):
-    encoding = SUM_MODEL_TOKENIZER(sentence, return_tensors="pt")
-
-    input_ids, attention_masks = encoding["input_ids"].to(
-        "cpu"), encoding["attention_mask"].to("cpu")
-
-    outputs = SUM_MODEL.generate(
-        input_ids=input_ids, attention_mask=attention_masks,
-        max_length=3000,
-        early_stopping=True
-    )
-    result = ""
-    with open(path, "w", encoding="utf-8") as f:
-        for output in outputs:
-            line = SUM_MODEL_TOKENIZER.decode(
-                output, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            f.write(line)
-            result += line
-    return result
-
 
 # CHECK INPUT SAFETY
 
@@ -135,8 +105,8 @@ def after_request(response):
 def index():
     # chứa hình đại diện, tên tài khoản, gói sử dụng, email, mật khẩu.
     login_status = check_login()
-    if login_status:
-        return render_template("index.html", login_status=login_status)
+    if login_status or db.session.execute(db.Select(User).filter_by(id=session["user_id"])).first() == None:
+        return render_template("index.html", confirmation=False)
     else:
         user = db.session.execute(db.Select(User).filter_by(
             id=session["user_id"])).first()[0]
@@ -197,6 +167,7 @@ def register():
     else:
         uploaded_username = request.form.get("username")
         uploaded_password = request.form.get("password")
+        role = request.form.get("role")
         if uploaded_username == "":
             return apology("No username found, please enter username.", 403)
         elif uploaded_password == "":
@@ -205,9 +176,11 @@ def register():
             return apology("Username contains special character.", 403)
         elif db.session.execute(db.Select(User).filter_by(username=uploaded_username)).first() != None:
             return apology("Username already taken, please try another one.", 403)
+        elif role == "":
+            return apology("Bạn vui lòng chọn vai trò của mình nhé", 403)
         else:
             user = User(username=uploaded_username,
-                        password=generate_password_hash(uploaded_password))
+                        password=generate_password_hash(uploaded_password), role=role)
             db.session.add(user)
             db.session.commit()
             session["user_id"] = db.session.execute(
@@ -228,14 +201,24 @@ def record():
             return apology("No audio recording file found, please try again", 403)
 
         uploaded_file = request.files['audio']
-        upload_subject = request.form.get("subject")
+        upload_subject = request.form.get("topic")
+        folder = request.form.get("folder")
+        record_filename = request.form.get("filename")
+
+        # CHECK ERROR
         if uploaded_file.filename == "":
             flash("Error, file not uploaded.")
             time.sleep(50)
             return apology("Filename corrupted, please try again", 403)
 
         if upload_subject == "":
-            return apology("No subject found, please try again", 403)
+            return apology("No topic found, please try again", 403)
+
+        if folder == "":
+            folder = "Untitled"
+
+        if record_filename == "":
+            return apology("Bạn vui lòng điên tên cho recording này nhé", 403)
 
         if uploaded_file:
             # LOAD AND CHECK AUDIO
@@ -257,8 +240,7 @@ def record():
             recording_path = os.path.join(
                 app.config["UPLOAD_FOLDER"], filename)
             record = Recording(path=recording_path,
-                               subject=upload_subject, user=current_user)
-            session["recording_path"] = recording_path
+                               topic=upload_subject, user=current_user, filename=record_filename, folder=folder)
             db.session.add(record)
 
             # TRANSCRIBE
@@ -267,22 +249,16 @@ def record():
             transcribe_number = len(os.listdir(transcribe_path))
             with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}"), "w", encoding="utf-8") as f:
                 f.write(result)
-            transribe = Transcript(subject=upload_subject, trans_path=os.path.join(
-                transcribe_path, f"transcribe_{transcribe_number}"), user=current_user)
+            transribe = Transcript(topic=upload_subject, trans_path=os.path.join(
+                transcribe_path, f"transcribe_{transcribe_number}"), user=current_user, filename=record_filename, folder=folder)
             db.session.add(transribe)
             session["transcript_path"] = os.path.join(
                 transcribe_path, f"transcribe_{transcribe_number}")
-
-            # SUMMARY
-            summarize_path = os.path.join("static", "summarize")
-            summarize = os.path.join(
-                summarize_path, f"summarize_{len(os.listdir(summarize_path))}")
-            summary = Summary(subject=upload_subject,
-                              sum_path=summarize, user=current_user)
-            session["summary_path"] = summarize
-            db.session.add(summary)
             db.session.commit()
+
             response["ok"] = True
+        else:
+            return apology("Bạn vui lòng ghi âm trước khi bấm gửi nhé", 403)
         return jsonify(response)
 
 
@@ -341,22 +317,39 @@ def summary():
             with open(session["transcript_path"], "r", encoding="utf-8") as f:
                 for line in f:
                     transcribe_text += line
-            return render_template("summary_login.html", transcribe_text=transcribe_text)
+            return render_template("summary_from_record.html", transcribe_text=transcribe_text)
         else:
-            return render_template("summary_not_login.html")
-    else:
-        if session.get("transcript_path") != None and session.get("summary_path") != None:
-            filename = request.form.get("file_name")
-            length = request.form.get("length")
-            recording = db.session.execute(
-                db.Select(Recording).filter_by(path=session["recording_path"])).first()[0]
             user = db.session.execute(
                 db.Select(User).filter_by(id=session["id"])).first()[0]
-            if filename != "":
-                recording.filename = filename
-                db.session.commit()
+            return render_template("summary.html")
+    else:
+        if session.get("transcript_path") != None:
+            length = request.form.get("length")
+
+            # query recording and user
+            transcript = db.session.execute(
+                db.Select(Transcript).filter_by(path=session["transcript_path"])).first()[0]
+            user = db.session.execute(
+                db.Select(User).filter_by(id=session["id"])).first()[0]
+
+            # segment
+            text_segment_with_tokens(transcript.trans_path)
+
+            # initialize summary object
+            summarize_path = os.path.join("static", "summarize")
+            summarize_path = os.path.join(
+                summarize_path, f"summarize_{len(os.listdir(summarize_path))}")
+
+            # summarize
             summarize(session["transcript_path"],
-                      length, session["summary_path"], recording.subject, user.role)
+                      length, summarize_path, transcript.topic, user.role)
+
+            summary = Summary(topic=transcript.topic,
+                              sum_path=summarize_path, user=user)
+            db.session.add(summary)
+            db.session.commit()
+            # session["transcript_path"] = None
+
             return redirect("display_summary", summary_file_path=session["summary_path"])
 
 
