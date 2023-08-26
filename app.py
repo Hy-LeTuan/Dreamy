@@ -282,10 +282,10 @@ def record():
             with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}"), "w", encoding="utf-8") as f:
                 f.write(result)
             transribe = Transcript(topic=upload_subject, trans_path=os.path.join(
-                transcribe_path, f"transcribe_{transcribe_number}"), user=current_user, filename=record_filename, folder=folder)
+                transcribe_path, f"transcribe_{transcribe_number}.txt"), user=current_user, filename=record_filename, folder=folder)
             db.session.add(transribe)
             session["transcript_path"] = os.path.join(
-                transcribe_path, f"transcribe_{transcribe_number}")
+                transcribe_path, f"transcribe_{transcribe_number}.txt")
             db.session.commit()
 
             response["ok"] = True
