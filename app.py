@@ -279,7 +279,7 @@ def record():
             transcribe_path = os.path.join(
                 "static", "transcripts")
             transcribe_number = len(os.listdir(transcribe_path))
-            with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}"), "w", encoding="utf-8") as f:
+            with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}.txt"), "w", encoding="utf-8") as f:
                 f.write(result)
             transribe = Transcript(topic=upload_subject, trans_path=os.path.join(
                 transcribe_path, f"transcribe_{transcribe_number}.txt"), user=current_user, filename=record_filename, folder=folder)
