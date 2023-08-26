@@ -5,8 +5,7 @@ from faster_whisper import WhisperModel
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
-from helpers import login_required, apology, get_question, check_api_usage, check_login, text_segment_with_tokens, summarize, write_summary
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from helpers import login_required, apology, get_question, check_api_usage, check_login, text_segment_with_tokens, summarize, read_summary, text_segment_with_tokens_direct
 
 # INITIALIZE DATABASE
 app = Flask(__name__)
@@ -56,12 +55,16 @@ class Transcript(db.Model):
     folder = db.Column(db.String, nullable=False)
     topic = db.Column(db.String, nullable=False)
     trans_path = db.Column(db.String, nullable=False)
+    summary = db.relationship("Summary", backref="transcript")
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
 
 class Summary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.String, nullable=False)
+    filename = db.Column(db.String, nullable=False)
+    folder = db.Column(db.String, nullable=False)
+    transcript_id = db.Column(db.Integer, db.ForeignKey("transcript.id"))
     sum_path = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
@@ -106,14 +109,43 @@ def index():
     # chứa hình đại diện, tên tài khoản, gói sử dụng, email, mật khẩu.
     login_status = check_login()
     if login_status or db.session.execute(db.Select(User).filter_by(id=session["user_id"])).first() == None:
-        return render_template("index.html", confirmation=False)
+        return render_template("index.html")
     else:
+        return redirect("/dashboard")
+
+
+@app.route("/dashboard", methods=["GET", "POST"])
+def dashboard():
+    if request.method == "GET":
         user = db.session.execute(db.Select(User).filter_by(
             id=session["user_id"])).first()[0]
-        recording_number = len(user.recordings)
-        summaries = len(user.summaries)
+        recordings = len(user.recordings)
+        summaries = user.summaries
         transcripts = len(user.transcripts)
-        return render_template("index.html", user=user, recording_number=recording_number, summaries=summaries, transcripts=transcripts, login_status=login_status)
+
+        folder = {}
+        for sum in summaries:
+            if folder.get(sum.folder) != None:
+                folder[sum.folder].append(sum)
+            else:
+                folder[sum.folder] = [sum]
+
+        return render_template("dashboard.html", r_length=recordings, s_length=len(summaries), t_length=transcripts, folder=folder)
+
+    else:
+        summary_id = request.form.get("summary_id")
+        if summary_id == "":
+            return apology("Bạn vui lòng chọn file tóm tắt để xem nhé", 403)
+        summary = db.session.execute(
+            db.Select(Summary).filter_by(id=summary_id)).first()[0]
+        text = read_summary(summary.sum_path)
+
+        return render_template("summary_from_dash.html", text=text)
+
+
+@app.route("/profile")
+def profile():
+    pass
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -267,70 +299,30 @@ def route_apology():
     return render_template("apology.html", top=403, bottom="Opps, looks like there is something wrong. Please try again ")
 
 
-@app.route("/my_folder")
-def my_folder():
-    """Show subjects, recordings and summaries."""
-    user = db.session.execute(db.Select(User).filter_by(
-        id=session["user_id"])).first()[0]
-    recordings = user.recordings
-    record_subject_dict = {}
-    for rec in recordings:
-        filename = rec.filename if rec.filename != "" else "Untitled recording"
-        if rec.subject.capitalize() in record_subject_dict:
-            record_subject_dict[rec.subject].append(filename)
-        else:
-            record_subject_dict[rec.subject.capitalize()] = []
-            record_subject_dict[rec.subject.capitalize()].append(filename)
-    return render_template("my_folder.html", rec_subject=record_subject_dict)
-
-
-@app.route("/display")
-def display():
-    """Display recording name and summay pairs"""
-    user = db.session.execute(db.Select(User).filter_by(
-        id=session["user_id"])).first()[0]
-    recordings = user.recordings
-    summaries = user.summaries
-    recording_name = [record.filename if record.filename !=
-                      "" else "Untitled recording" for record in recordings]
-    all_summary = []
-    subjects = []
-    for summary in summaries:
-        subjects.append(summary.subject)
-        with open(summary.sum_path, "r", encoding="utf-8") as f:
-            all_summary.append(f.readlines()[0])
-    return render_template("display.html", recording_name=recording_name, subjects=subjects, all_summary=all_summary, length=len(recording_name))
-
-
-@app.route("/study-mode")
-def study_mode():
-    """In development"""
-    pass
-
-
 @app.route("/summary", methods=["POST", "GET"])
 def summary():
     """Display summarization for latest recording"""
     if request.method == "GET":
-        transcribe_text = ""
         if session.get("transcript_path") != None:
+            transcribe_text = ""
             with open(session["transcript_path"], "r", encoding="utf-8") as f:
                 for line in f:
                     transcribe_text += line
             return render_template("summary_from_record.html", transcribe_text=transcribe_text)
         else:
             user = db.session.execute(
-                db.Select(User).filter_by(id=session["id"])).first()[0]
-            return render_template("summary.html")
+                db.Select(User).filter_by(id=session["user_id"])).first()[0]
+            transcripts = user.transcripts
+            return render_template("summary.html", transcripts=transcripts)
     else:
         if session.get("transcript_path") != None:
             length = request.form.get("length")
 
             # query recording and user
             transcript = db.session.execute(
-                db.Select(Transcript).filter_by(path=session["transcript_path"])).first()[0]
+                db.Select(Transcript).filter_by(trans_path=session["transcript_path"])).first()[0]
             user = db.session.execute(
-                db.Select(User).filter_by(id=session["id"])).first()[0]
+                db.Select(User).filter_by(id=session["user_id"])).first()[0]
 
             # segment
             text_segment_with_tokens(transcript.trans_path)
@@ -338,27 +330,90 @@ def summary():
             # initialize summary object
             summarize_path = os.path.join("static", "summarize")
             summarize_path = os.path.join(
-                summarize_path, f"summarize_{len(os.listdir(summarize_path))}")
+                summarize_path, f"summarize_{len(os.listdir(summarize_path))}.txt")
 
             # summarize
             summarize(session["transcript_path"],
                       length, summarize_path, transcript.topic, user.role)
 
             summary = Summary(topic=transcript.topic,
-                              sum_path=summarize_path, user=user)
+                              sum_path=summarize_path, user=user, transcript=transcript, folder=transcript.folder, filename=transcript.filename)
             db.session.add(summary)
             db.session.commit()
-            # session["transcript_path"] = None
+            session["transcript_path"] = None
 
-            return redirect("display_summary", summary_file_path=session["summary_path"])
+            return redirect(url_for("display_summary", summary_file_path=summarize_path))
+        else:
+            transcript_id = request.form.get("transcript_option")
+            content = request.form.get("content")
+            length = request.form.get("length")
+            if length == None:
+                return apology("Bạn vui lòng chọn kích thước cho recording nhé", 403)
+            # check valid
+            if transcript_id:
+                transcript = db.session.execute(
+                    db.Select(Transcript).filter_by(id=transcript_id)).first()[0]
+
+                # get user
+                user = db.session.execute(db.Select(user).filter_by(
+                    id=session["user_id"])).first()[0]
+
+                # segment
+                text_segment_with_tokens(transcript.trans_path)
+
+                # initialize summary object
+                summarize_path = os.path.join("static", "summarize")
+                summarize_path = os.path.join(
+                    summarize_path, f"summarize_{len(os.listdir(summarize_path))}.txt")
+
+                # summarize
+                summarize(transcript.trans_path,
+                          length, summarize_path, transcript.topic, user.role)
+                summary = Summary(topic=transcript.topic,
+                                  sum_path=summarize_path, user=user, transcript=transcript, folder=transcript.folder, filename=filename)
+                db.session.add(summary)
+                db.session.commit()
+                return redirect("display_summary", summary_file_path=summarize_path)
+
+            elif content:
+                folder = request.form.get("folder")
+                topic = request.form.get("topic")
+                filename = request.form.get("filename")
+
+                segment_path = os.path.join("static", "summary_segment")
+                segment_path = os.path.join(
+                    segment_path, f"segment_{len(os.listdir(segment_path))}.txt")
+                text_segment_with_tokens_direct(segment_path, content)
+
+                summarize_path = os.path.join("static", "summarize")
+                summarize_path = os.path.join(
+                    summarize_path, f"summarize_{len(os.listdir(summarize_path))}.txt")
+
+                summarize(segment_path, length, summarize_path)
+
+                summary = Summary(
+                    topic=topic, filename=filename, folder=folder, user=user, sum_path=summarize_path)
+
+                db.session.add(summary)
+                db.session.commit()
+                return redirect("display_summary", summary_file_path=summarize_path)
+
+            else:
+                return apology("Bạn vui lòng chọn một file ghi âm hoặc điền nội dung mình muốn tóm tắt trước khi bấm submit nhé", 403)
 
 
 @app.route("/display_summary", methods=["POST", "GET"])
 def display_summary():
-    if request.mehtod == "GET":
-        summary_file_path = request.args.get("summary_file_path")
+    summary_file_path = request.args.get("summary_file_path")
+    if request.method == "GET":
+        text = read_summary(summary_file_path)
+        return render_template("display_summary.html", text=text)
     else:
-        pass
+        new_summary = request.form.get("content")
+        if new_summary:
+            with open(summary_file_path, "r", encoding="utf-8") as f:
+                f.write(new_summary)
+        return redirect("/recording")
 
 
 @app.route("/quiz", methods=["POST", "GET"])

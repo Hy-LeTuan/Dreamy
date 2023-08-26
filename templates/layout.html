@@ -36,7 +36,7 @@
 				{% if session.get("user_id") != None %}
 				<ul class="navbar-nav mx-auto">
 					<li class="nav-item me-2">
-						<a class="nav-link" href="/">Hành trình</a>
+						<a class="nav-link" href="/dashboard">Dashboard</a>
 					</li>
 					<li class="nav-item me-2">
 						<a class="nav-link" href="/record">Ghi âm</a>
@@ -46,9 +46,6 @@
 					</li>
 					<li class="nav-item me-2">
 						<a class="nav-link" href="/quiz">Quiz</a>
-					</li>
-					<li class="nav-item me-2">
-						<a class="nav-link" href="/profile">Profile</a>
 					</li>
 				</ul>
 				<ul class="navbar-nav ms-auto">
@@ -74,7 +71,7 @@
 			{% block main %}{% endblock %}
 		</main>
 		<footer
-			class="text-center container-fluid nav-background-light navbar fixed-bottom">
+			class="text-center nav-background-light container-fluid navbar fixed-bottom">
 			<div
 				class="container-fluid d-flex align-items-center gap-sm-5 justify-content-center">
 				<ul class="list-inline">

@@ -1,0 +1,40 @@
+{% extends "layout.html" %} {% block title %} Dashboard {% endblock %} {% block
+main %}
+<h3 class="page-title mb-3">Dashboard</h3>
+<div class="container-fluid mx-auto">
+	<div class="container-flex-wrap mb-2">
+		<div class="data-display">
+			<span>Số ghi âm: {{ r_length }}</span>
+		</div>
+		<div class="data-display">
+			<span>Số phiêm âm: {{ t_length }}</span>
+		</div>
+		<div class="data-display">
+			<span>Số tóm tắt: {{ s_length }}</span>
+		</div>
+	</div>
+	<h3 class="page-subtitle mt-5">Tóm tắt</h3>
+	{% if folder %}
+	<div class="container-flex-wrap">
+		<form action="/dashboard" method="post">
+			<select name="summary_id" class="form-select width-limit-13" id="">
+				{% for sub in folders %}
+				<div class="container">
+					<div class="top-folder-container">{{ sub }}</div>
+					<div class="folder-container">
+						{% for sum in folders[sub] %}
+						<option value="{{ sum.id }}">{{ sum.filename }}</option>
+						{% endfor %}
+					</div>
+				</div>
+				{% endfor %}
+			</select>
+		</form>
+	</div>
+	{% else %}
+	<div class="transcript-container mx-auto mt-3 mb-4">
+		<div>Bạn chưa có tóm tắt nào cả.</div>
+	</div>
+	{% endif %}
+</div>
+{% endblock %}

@@ -84,8 +84,31 @@ def text_segment_with_tokens(trans_path):
             f.write(f"{chunk}\n")
 
 
-def summarize(trans_path, length, sum_path, subject, user_role="user"):
-    api_key = "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"
+def text_segment_with_tokens_direct(segment_path, content):
+    token_limit = 1000
+    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo-16k")
+    current_chunk = ""
+    chunk_list = []
+    current_token = 0
+
+    for word in content.split():
+        if current_token + len(encoding.encode(word)) <= token_limit:
+            current_token += len(encoding.encode(word))
+            current_chunk += word if current_chunk == "" else f" {word}"
+        else:
+            chunk_list.append(current_chunk)
+            current_token = 0
+            current_chunk = ""
+            current_chunk += word
+            current_token += len(encoding.encode(word))
+
+    with open(segment_path, "w", encoding="utf-8") as f:
+        for chunk in chunk_list:
+            f.write(f"{chunk}\n")
+
+
+def summarize(trans_path, length, sum_path, subject="learning", user_role="user"):
+    api_key = "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"
 
     with open(trans_path, "r", encoding="utf-8") as f:
         conversation = [{"role": "system", "content": f"You are a helpful assistant that summarizes lesson transcripts for a {user_role} in {subject} in Vietnamese. The summary's length must be {length} and the summary may not be longer or larger than the original transcript. You must also highlight important points of the transcript so that students can use the summary to perfectly understand the lesson without the need to re-read the transcript."}]
@@ -119,11 +142,13 @@ def summarize(trans_path, length, sum_path, subject, user_role="user"):
             f.write(response.choices[0].message["content"].strip())
 
 
-def write_summary(sum_path):
+def read_summary(sum_path):
+    text = ""
     with open(sum_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
-                print(line)
+                text += line
             else:
                 continue
+    return text

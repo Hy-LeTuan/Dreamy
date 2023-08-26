@@ -50,11 +50,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		event.preventDefault();
 		selectElement = document.getElementById("topic");
 		selectedValue = selectElement.value;
-		filenameValue = document.getElementById("filename").value;
-		folderValue = document.getElementById("folder").value;
+		let filenameValue = document.getElementById("filename").value;
+		let folderValue = document.getElementById("folder").value;
 		if (chunks.length > 0) {
 			const audioBlob = new Blob(chunks);
-			uploadAudioData(audioBlob, selectedValue);
+			uploadAudioData(
+				audioBlob,
+				selectedValue,
+				filenameValue,
+				folderValue
+			);
 		}
 	});
 
