@@ -101,6 +101,8 @@ def text_segment_with_tokens_direct(segment_path, content):
             current_chunk = ""
             current_chunk += word
             current_token += len(encoding.encode(word))
+    if current_chunk != "":
+        chunk_list.append(current_chunk)
 
     with open(segment_path, "w", encoding="utf-8") as f:
         for chunk in chunk_list:
@@ -108,7 +110,7 @@ def text_segment_with_tokens_direct(segment_path, content):
 
 
 def summarize(trans_path, length, sum_path, subject="learning", user_role="user"):
-    api_key = "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"
+    api_key = "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"
 
     with open(trans_path, "r", encoding="utf-8") as f:
         conversation = [{"role": "system", "content": f"You are a helpful assistant that summarizes lesson transcripts for a {user_role} in {subject} in Vietnamese. The summary's length must be {length} and the summary may not be longer or larger than the original transcript. You must also highlight important points of the transcript so that students can use the summary to perfectly understand the lesson without the need to re-read the transcript."}]

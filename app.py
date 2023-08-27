@@ -81,7 +81,7 @@ with app.app_context():
 
 # AUDIO MODEL
 
-MODEL = WhisperModel("large-v2", device="cuda", compute_type="float16")
+MODEL = WhisperModel("large-v2", device="cuda", compute_type="int8")
 
 # CHECK INPUT SAFETY
 
@@ -294,6 +294,70 @@ def record():
         return jsonify(response)
 
 
+@app.route("/upload_record", methods=["POST", "GET"])
+def upload_record():
+    if request.method == "GET":
+        return render_template("upload_record.html")
+    else:
+        audio_file = request.files["audio_file"]
+        upload_subject = request.form.get("topic")
+        folder = request.form.get("folder")
+        upload_filename = request.form.get("filename")
+
+        # CHECK ERROR
+        if audio_file.filename == "":
+            flash("Error, file not uploaded.")
+            time.sleep(50)
+            return apology("Filename corrupted, please try again", 403)
+
+        if upload_subject == "":
+            return apology("No topic found, please try again", 403)
+
+        if folder == "":
+            folder = "Untitled"
+
+        if upload_filename == "":
+            upload_filename = "Untitled file"
+
+        if audio_file:
+            numbering = len(os.listdir(app.config["UPLOAD_FOLDER"]))
+            filename = f"recording_{numbering}.wav"
+            audio_file.save(os.path.join(
+                app.config["UPLOAD_FOLDER"], filename))
+            segments, info = MODEL.transcribe(os.path.join(
+                app.config["UPLOAD_FOLDER"], filename), language="vi", beam_size=5, vad_filter=True)
+            result = [segment.text for segment in segments]
+            if len(result) == 0:
+                return apology("No speech found in recording, pleas try again", 403)
+            result = result[0]
+            # LOAD USER
+            current_user = db.session.execute(db.Select(User).filter_by(
+                id=session["user_id"])).first()[0]
+
+            # RECORDING
+            recording_path = os.path.join(
+                app.config["UPLOAD_FOLDER"], filename)
+            record = Recording(path=recording_path,
+                               topic=upload_subject, user=current_user, filename=upload_filename, folder=folder)
+            db.session.add(record)
+
+            # TRANSCRIBE
+            transcribe_path = os.path.join(
+                "static", "transcripts")
+            transcribe_number = len(os.listdir(transcribe_path))
+            with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}.txt"), "w", encoding="utf-8") as f:
+                f.write(result)
+            transribe = Transcript(topic=upload_subject, trans_path=os.path.join(
+                transcribe_path, f"transcribe_{transcribe_number}.txt"), user=current_user, filename=upload_filename, folder=folder)
+            db.session.add(transribe)
+            session["transcript_path"] = os.path.join(
+                transcribe_path, f"transcribe_{transcribe_number}.txt")
+            db.session.commit()
+            return redirect("/summary")
+        else:
+            return apology("Bạn vui lòng ghi âm trước khi bấm gửi nhé", 403)
+
+
 @app.route("/apology")
 def route_apology():
     return render_template("apology.html", top=403, bottom="Opps, looks like there is something wrong. Please try again ")
@@ -325,7 +389,7 @@ def summary():
                 db.Select(User).filter_by(id=session["user_id"])).first()[0]
 
             # segment
-            text_segment_with_tokens(transcript.trans_path)
+            # text_segment_with_tokens(transcript.trans_path)
 
             # initialize summary object
             summarize_path = os.path.join("static", "summarize")
@@ -340,7 +404,7 @@ def summary():
                               sum_path=summarize_path, user=user, transcript=transcript, folder=transcript.folder, filename=transcript.filename)
             db.session.add(summary)
             db.session.commit()
-            session["transcript_path"] = None
+            # session["transcript_path"] = None
 
             return redirect(url_for("display_summary", summary_file_path=summarize_path))
         else:
@@ -410,7 +474,7 @@ def display_summary():
         return render_template("display_summary.html", text=text)
     else:
         new_summary = request.form.get("content")
-        if new_summary:
+        if new_summary != "":
             with open(summary_file_path, "r", encoding="utf-8") as f:
                 f.write(new_summary)
         return redirect("/recording")

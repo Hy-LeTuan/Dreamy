@@ -1,0 +1,47 @@
+{% extends "layout.html" %} {% block title %} Record {% endblock %} {% block
+main %}
+<div class="container-form-old mx-auto">
+	<div class="top-login-bar"></div>
+	<div class="form-body-container">
+		<div class="mx-auto mt-1 mb-0">
+			<span class="form-title">Chọn file ghi âm</span>
+		</div>
+		<form
+			action="/upload_record"
+			method="post"
+			class="form-control"
+			enctype="multipart/form-data">
+			<input
+				type="text"
+				name="topic"
+				id="topic"
+				class="mx-auto form-name-input text-center mt-2 me-2"
+				placeholder="Chủ đề của file là" />
+			<input
+				type="text"
+				name="filename"
+				id="filename"
+				class="mx-auto form-name-input text-center mt-2 me-2"
+				placeholder="Tên của file là" />
+			<input
+				type="text"
+				name="folder"
+				id="folder"
+				class="mx-auto form-name-input text-center mt-2"
+				placeholder="Thư mục của file" />
+			<div class="mt-4 form-row">
+				<div class="label">Chọn file ghi âm</div>
+				<input
+					class="form-control-file me-auto w-auto"
+					id="audio_file"
+					name="audio_file"
+					placeholder="Chọn file"
+					type="file" />
+			</div>
+			<button class="btn btn-primary mb-3 mt-4 me-auto" type="submit">
+				<span>Gửi file ghi âm</span>
+			</button>
+		</form>
+	</div>
+</div>
+{% endblock %}
