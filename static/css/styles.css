@@ -673,3 +673,61 @@ tbody tr:nth-of-type(odd) {
 	font-size: 3rem;
 	font-weight: bold;
 }
+
+.homepage-card {
+	border-radius: 15px;
+	border: 4px solid #02005f;
+	background: #6150c9;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	width: 13rem;
+	height: 10rem;
+	text-align: center;
+	padding: 1rem;
+}
+
+.homepage-card__subtitle {
+	color: #fff;
+	text-align: center;
+	font-family: "Baloo", cursive;
+	font-size: 1.5rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.homepage-card__center-container {
+	border-radius: 20px;
+	background: #daf5ff;
+	width: 10rem;
+	height: 6rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 0.25rem;
+}
+
+.homepage-card__center-container > img {
+	height: auto;
+	width: 40%;
+}
+
+.audio-file-field {
+	border-radius: 10px;
+	border: 5px solid #300f1d;
+	background: #fff;
+	width: 20rem;
+	height: 2.5rem;
+	font-size: 1.25rem;
+	text-align: center;
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	font-family: "Baloo";
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.record-alert {
+	font-family: "Baloo", cursive;
+	color: #3f1d38;
+	font-size: 1.25rem;
+}
