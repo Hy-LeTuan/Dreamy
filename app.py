@@ -263,7 +263,6 @@ def record():
             result = [segment.text for segment in segments]
             if len(result) == 0:
                 return apology("No speech found in recording, pleas try again", 403)
-            result = result[0]
             # LOAD USER
             current_user = db.session.execute(db.Select(User).filter_by(
                 id=session["user_id"])).first()[0]
@@ -280,7 +279,9 @@ def record():
                 "static", "transcripts")
             transcribe_number = len(os.listdir(transcribe_path))
             with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}.txt"), "w", encoding="utf-8") as f:
-                f.write(result)
+                for seg in result:
+                    f.write(seg)
+
             transribe = Transcript(topic=upload_subject, trans_path=os.path.join(
                 transcribe_path, f"transcribe_{transcribe_number}.txt"), user=current_user, filename=record_filename, folder=folder)
             db.session.add(transribe)
@@ -329,7 +330,7 @@ def upload_record():
             result = [segment.text for segment in segments]
             if len(result) == 0:
                 return apology("No speech found in recording, pleas try again", 403)
-            result = result[0]
+
             # LOAD USER
             current_user = db.session.execute(db.Select(User).filter_by(
                 id=session["user_id"])).first()[0]
@@ -346,7 +347,9 @@ def upload_record():
                 "static", "transcripts")
             transcribe_number = len(os.listdir(transcribe_path))
             with open(os.path.join(transcribe_path, f"transcribe_{transcribe_number}.txt"), "w", encoding="utf-8") as f:
-                f.write(result)
+                for seg in result:
+                    f.write(seg.text
+                            )
             transribe = Transcript(topic=upload_subject, trans_path=os.path.join(
                 transcribe_path, f"transcribe_{transcribe_number}.txt"), user=current_user, filename=upload_filename, folder=folder)
             db.session.add(transribe)
