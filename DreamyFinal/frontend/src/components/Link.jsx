@@ -1,8 +1,8 @@
 import React from "react";
 
 function Link({ content, color, highlightColor = "blue", href = null }) {
-	const textColor = "";
-	const textHighlightColor = "";
+	let textColor = "";
+	let textHighlightColor = "";
 
 	switch (color) {
 		case "white":
@@ -27,31 +27,29 @@ function Link({ content, color, highlightColor = "blue", href = null }) {
 			textHighlightColor = null;
 			break;
 		case "white":
-			textHighlightColor = "text-white";
+			textHighlightColor = "hover:text-white";
 			break;
 		case "black":
 			textColor = "text-black";
 			break;
 		case "primaryr":
-			textHighlightColor = "text-primary";
+			textHighlightColor = "hover:text-primary";
 			break;
 		case "secondary":
-			textHighlightColor = "text-secondary";
+			textHighlightColor = "hover:text-secondary";
 			break;
 		case "accent":
-			textHighlightColor = "text-accent";
+			textHighlightColor = "hover:text-accent";
 			break;
 		case "blue":
-			textHighlightColor = "text-blue-400";
+			textHighlightColor = "hover:text-blue-400";
 			break;
 	}
 
 	return (
 		<a
 			href={`${href ? href : null}`}
-			className={`font-body ${textColor} ${
-				textHighlightColor ? "hover:" + textHighlightColor : ""
-			}`}>
+			className={`${textColor} ${textHighlightColor}`}>
 			{content}
 		</a>
 	);
