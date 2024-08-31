@@ -2,10 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+.display {
+	@apply font-header text-6xl tracking-wide leading-tight;
+}
+
+h1 {
+	@apply font-header text-5xl;
+}
+
+h2 {
+	@apply font-header text-4xl;
+}
+
 h3 {
 	@apply font-header text-3xl;
 }
 
 h4 {
 	@apply font-header text-2xl;
+}
+
+h6 {
+	@apply font-header text-xl;
 }

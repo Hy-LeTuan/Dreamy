@@ -12,6 +12,9 @@ export default {
 				header: ['"Raleway"', "sans-serif"],
 				body: ['"Roboto"', "sans-serif"],
 			},
+			backgroundImage: {
+				"mountain-image": "url('/src/assets/images/mountain.png')",
+			},
 		},
 	},
 	plugins: [],
