@@ -13,6 +13,10 @@ function Header() {
 						className="w-16 h-16"
 					/>
 				</a>
+				<div className="border-r-2 border-white h-8"></div>
+				<a href="/">
+					<h4 className="font-medium text-white">Dreamy</h4>
+				</a>
 			</div>
 			<div className="flex flex-row items-center justify-center gap-10">
 				<HeaderButton>
