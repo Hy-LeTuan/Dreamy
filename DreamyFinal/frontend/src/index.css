@@ -25,3 +25,7 @@ h4 {
 h6 {
 	@apply font-header text-xl;
 }
+
+p {
+	@apply font-body text-xl;
+}

@@ -1,6 +1,6 @@
 import React from "react";
 
-function Section({ color, children }) {
+function Section({ color, className = null, children }) {
 	let sectionColor;
 	switch (color) {
 		case "white":
@@ -17,6 +17,10 @@ function Section({ color, children }) {
 			break;
 		case "mountain":
 			sectionColor = "bg-mountain-image";
+			break;
+		case "secondary-green":
+			sectionColor = "bg-secondary-green";
+			break;
 	}
 	return (
 		<section
