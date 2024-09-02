@@ -4,6 +4,8 @@ import Section from "../components/Section";
 import SimpleCard from "../components/SimpleCard";
 import { Button } from "@headlessui/react";
 import DynamicBodyCard from "../components/DynamicBodyCard";
+import FeedbackCard from "../components/FeedbackCard";
+import Footer from "../components/Footer";
 
 function Root() {
 	return (
@@ -67,6 +69,13 @@ function Root() {
 							at your own pace
 						</span>
 					</h1>
+					<p className="text-gray-400 w-1/2 text-center">
+						Elevate your note-taking experience with Dreamy. Beyond
+						simple text notes, Dreamy empowers you to record
+						lectures, convert recordings into transcripts, summarize
+						key points, and create personalized quizzes for an
+						optimized revision process.
+					</p>
 				</div>
 				<div className="w-full px-28 grid grid-cols-3 place-items-stretch gap-16 mt-24">
 					<DynamicBodyCard
@@ -184,7 +193,7 @@ function Root() {
 					<DynamicBodyCard
 						header={
 							<h2 className="text-white font-medium text-center">
-								GEENERATE QUIZZES
+								GENERATE QUIZZES
 							</h2>
 						}
 						hiddenBody={
@@ -238,6 +247,28 @@ function Root() {
 					</DynamicBodyCard>
 				</div>
 			</Section>
+			<Section color={"secondary"}>
+				<div className="w-full flex flex-col justify-center items-center gap-32">
+					<h1 className="text-black font-medium">
+						Hear what our happy{" "}
+						<span className="font-bold text-accent italic">
+							Dreamy
+						</span>{" "}
+						users say
+					</h1>
+				</div>
+				<div className="w-full mt-24">
+					<div className="flex flex-row">
+						<FeedbackCard
+							className={
+								"bg-white px-3 py-3 border-2 border-black rounded-lg"
+							}
+							rating={5}
+						/>
+					</div>
+				</div>
+			</Section>
+			<Footer />
 		</>
 	);
 }
