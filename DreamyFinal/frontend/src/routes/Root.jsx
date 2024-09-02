@@ -61,41 +61,180 @@ function Root() {
 			</Section>
 			<Section color={"white"}>
 				<div className="w-full flex flex-col justify-center items-center gap-8">
-					<h6 className="text-neutral-400">
-						ADAPTIVE FUNCTIONALITIES
-					</h6>
-					<h1 className="text-black">
-						Learn and memorize at your own pace
+					<h1 className="text-black font-medium">
+						Learn and memorize{" "}
+						<span className="text-accent italic font-bold">
+							at your own pace
+						</span>
 					</h1>
-					{/* <div className="w-1/2">
-						<p className="text-center">
-							With Dreamy, you can record your lessons and
-							lectures and transcribe them to text for easier
-							review. Dreamy also allows you to summarize your
-							transcription to clear, concise notes that can help
-							your memorize them better while also providing a
-							clear and consistent format.
-						</p>
-					</div> */}
 				</div>
 				<div className="w-full px-28 grid grid-cols-3 place-items-stretch gap-16 mt-24">
 					<DynamicBodyCard
 						header={
-							<h2 className="text-white font-medium">RECORD</h2>
+							<h2 className="text-white font-medium text-center">
+								RECORD LECTURES
+							</h2>
 						}
 						hiddenBody={
-							<p className="text-white">
-								This then becomes the body text to write our
-								description and be super detailed about it
-							</p>
+							<div className="flex flex-col justify-start items-center gap-8">
+								<div className="flex flex-row items-center justify-center gap-3">
+									<img
+										src="/src/assets/icons/checkmark.svg"
+										alt="Checkmark icon"
+										className="w-7 h-7"
+									/>
+									<p className="text-white">
+										Record your lectures with a 3 hour
+										recording time for the best lesson
+										engagement
+									</p>
+								</div>
+								<div className="flex flex-row items-center justify-center gap-3">
+									<img
+										src="/src/assets/icons/checkmark.svg"
+										alt="Checkmark icon"
+										className="w-7 h-7"
+									/>
+									<p className="text-white">
+										Filter out all distractions with our
+										nosie filter feature for a better
+										recording quality
+									</p>
+								</div>
+								<div className="flex flex-row items-center justify-center gap-3">
+									<img
+										src="/src/assets/icons/checkmark.svg"
+										alt="Checkmark icon"
+										className="w-7 h-7"
+									/>
+									<p className="text-white">
+										Say goodbye to missed information with
+										our main subject voice focusing feature
+									</p>
+								</div>
+							</div>
 						}
-						className={"bg-accent rounded-lg px-6 py-6 gap-6"}>
-						<div className="bg-white/80 w-full inline-flex items-center justify-center py-10 rounded-lg">
+						className={
+							"border-2 border-black bg-accent rounded-2xl px-10 py-10 gap-8"
+						}>
+						<div className="bg-white w-11/12 inline-flex items-center justify-center py-12 rounded-2xl mx-auto group-data-[hover]:opacity-0 delay-200 group-data-[hover]:delay-0 duration-300 transition-all">
 							<img
 								src="/src/assets/images/microphone.png"
 								alt=""
+								className="w-32 h-32"
 							/>
 						</div>
+						<hr className="text-white w-11/12 transition-all duartion-300 delay-75 group-data-[hover]:delay-150 group-data-[hover]:-translate-y-48" />
+					</DynamicBodyCard>
+					<DynamicBodyCard
+						header={
+							<h2 className="text-white font-medium text-center">
+								SUMMARIZE NOTES
+							</h2>
+						}
+						hiddenBody={
+							<div className="flex flex-col justify-start items-center gap-6">
+								<div className="flex flex-row items-center justify-center gap-3">
+									<img
+										src="/src/assets/icons/checkmark.svg"
+										alt="Checkmark icon"
+										className="w-8 h-8"
+									/>
+									<p className="text-white">
+										Tired of listening to lectures? We can
+										transcribe your recordings to text file
+									</p>
+								</div>
+								<div className="flex flex-row items-center justify-center gap-3">
+									<img
+										src="/src/assets/icons/checkmark.svg"
+										alt="Checkmark icon"
+										className="w-8 h-8"
+									/>
+									<p className="text-white">
+										Format your transcription with a clear
+										title and body for better readability
+									</p>
+								</div>
+								<div className="flex flex-row items-center justify-center gap-3">
+									<img
+										src="/src/assets/icons/checkmark.svg"
+										alt="Checkmark icon"
+										className="w-8 h-8"
+									/>
+									<p className="text-white">
+										Create summary of all of your notes with
+										for a quick overview of your lecture
+									</p>
+								</div>
+							</div>
+						}
+						className={
+							"border-2 border-black bg-accent rounded-2xl px-10 py-10 gap-8"
+						}>
+						<div className="bg-white w-11/12 inline-flex items-center justify-center py-12 rounded-2xl mx-auto group-data-[hover]:opacity-0 delay-200 group-data-[hover]:delay-0 duration-300 transition-all">
+							<img
+								src="/src/assets/images/writing.png"
+								alt=""
+								className="w-32 h-32"
+							/>
+						</div>
+						<hr className="text-white w-11/12 transition-all duartion-300 delay-75 group-data-[hover]:delay-150 group-data-[hover]:-translate-y-48" />
+					</DynamicBodyCard>
+					<DynamicBodyCard
+						header={
+							<h2 className="text-white font-medium text-center">
+								GEENERATE QUIZZES
+							</h2>
+						}
+						hiddenBody={
+							<div className="flex flex-col justify-start items-center gap-6">
+								<div className="flex flex-row items-center justify-center gap-3">
+									<img
+										src="/src/assets/icons/checkmark.svg"
+										alt="Checkmark icon"
+										className="w-8 h-8"
+									/>
+									<p className="text-white">
+										Generate quizzes from your lecture notes
+										for a deeper understanding
+									</p>
+								</div>
+								<div className="flex flex-row items-center justify-center gap-3">
+									<img
+										src="/src/assets/icons/checkmark.svg"
+										alt="Checkmark icon"
+										className="w-8 h-8"
+									/>
+									<p className="text-white">
+										Generate quizzes from a whole topic for
+										a wider knowledge coverage
+									</p>
+								</div>
+								<div className="flex flex-row items-center justify-center gap-3">
+									<img
+										src="/src/assets/icons/checkmark.svg"
+										alt="Checkmark icon"
+										className="w-8 h-8"
+									/>
+									<p className="text-white">
+										We offer to save your solution and
+										errors for better after exam review
+									</p>
+								</div>
+							</div>
+						}
+						className={
+							"border-2 border-black bg-accent rounded-2xl px-10 py-10 gap-8"
+						}>
+						<div className="bg-white w-11/12 inline-flex items-center justify-center py-12 rounded-2xl mx-auto group-data-[hover]:opacity-0 delay-200 group-data-[hover]:delay-0 duration-300 transition-all">
+							<img
+								src="/src/assets/images/ideas.png"
+								alt=""
+								className="w-32 h-32"
+							/>
+						</div>
+						<hr className="text-white w-11/12 transition-all duartion-300 delay-75 group-data-[hover]:delay-150 group-data-[hover]:-translate-y-48" />
 					</DynamicBodyCard>
 				</div>
 			</Section>
