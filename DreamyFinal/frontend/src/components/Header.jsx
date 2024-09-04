@@ -1,27 +1,30 @@
 import React from "react";
-import Link from "./Link";
+import HeaderLink from "./HeaderLink";
 import HeaderButton from "./HeaderButton";
+import { Link } from "react-router-dom";
 
 function Header() {
 	return (
 		<div className="bg-primary flex flex-row justify-between items-center w-full px-16 py-2">
 			<div className="flex flex-row items-center justify-center gap-4">
-				<a href="/">
+				<Link to={"/"} className="group">
 					<img
 						src="/src/assets/icons/dreamer-icon.svg"
 						alt="dreamer icon"
-						className="w-16 h-16"
+						className="transition-transform duration-300 group-hover:scale-110 w-16 h-16"
 					/>
-				</a>
+				</Link>
 				<div className="border-r-2 border-white h-8"></div>
-				<a href="/">
-					<h4 className="font-medium text-white">Dreamy</h4>
-				</a>
+				<Link to={"/"} className="group">
+					<h4 className="transition-transform duration-300 font-medium text-white group-hover:scale-110">
+						Dreamy
+					</h4>
+				</Link>
 			</div>
 			<div className="flex flex-row items-center justify-center gap-10">
 				<HeaderButton>
 					<h4 className="font-medium">
-						<Link
+						<HeaderLink
 							content={"Overview"}
 							color={"white"}
 							highlightColor={null}
@@ -31,7 +34,7 @@ function Header() {
 				</HeaderButton>
 				<HeaderButton>
 					<h4 className="font-medium">
-						<Link
+						<HeaderLink
 							content={"Record"}
 							color={"white"}
 							highlightColor={null}
@@ -41,7 +44,7 @@ function Header() {
 				</HeaderButton>
 				<HeaderButton>
 					<h4 className="font-medium">
-						<Link
+						<HeaderLink
 							content={"Transcribe"}
 							color={"white"}
 							highlightColor={null}
@@ -53,11 +56,11 @@ function Header() {
 					className={"bg-accent"}
 					hoverBackgroundColor={"hover:bg-accent/80"}>
 					<h4 className="font-medium">
-						<Link
+						<HeaderLink
 							content={"Login"}
 							color={"white"}
 							highlightColor={null}
-							href={"/"}
+							href={"/login"}
 						/>
 					</h4>
 				</HeaderButton>

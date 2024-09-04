@@ -1,6 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-function Link({ content, color, highlightColor = "blue", href = null }) {
+function HeaderLink({ content, color, highlightColor = "blue", href = null }) {
 	let textColor = "";
 	let textHighlightColor = "";
 
@@ -47,12 +48,12 @@ function Link({ content, color, highlightColor = "blue", href = null }) {
 	}
 
 	return (
-		<a
-			href={`${href ? href : null}`}
-			className={`${textColor} ${textHighlightColor}`}>
+		<Link
+			className={`${textColor} ${textHighlightColor}`}
+			to={`${href ? href : null}`}>
 			{content}
-		</a>
+		</Link>
 	);
 }
 
-export default Link;
+export default HeaderLink;

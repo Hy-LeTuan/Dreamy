@@ -22,8 +22,12 @@ h4 {
 	@apply font-header text-2xl;
 }
 
-h6 {
+h5 {
 	@apply font-header text-xl;
+}
+
+h6 {
+	@apply font-header text-lg;
 }
 
 p {
