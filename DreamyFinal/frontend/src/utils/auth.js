@@ -53,7 +53,7 @@ const login = async (data) => {
 	formData.append("password", password);
 
 	try {
-		const response = await axiosInstance.post("users/login", formData);
+		const response = await axiosInstance.post("users/token", formData);
 
 		// get jwt token
 		const accessToken = response.data["access"];
