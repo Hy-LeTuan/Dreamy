@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics
 from .serializers import UserSerializer, MyTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+import pyotp
+from datetime import datetime, timedelta
 
 
 class CreateUserAPIView(generics.CreateAPIView):

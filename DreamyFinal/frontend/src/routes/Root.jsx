@@ -14,7 +14,7 @@ function Root() {
 			<Header />
 			<Section color={"mountain"}>
 				<div className="w-full flex flex-col justify-center items-center gap-32">
-					<div className="flex flex-col gap-4">
+					<div className="flex flex-col gap-6">
 						<h1 className="display text-black font-medium text-center">
 							Say hello to{" "}
 							<span className="text-accent italic font-bold">
@@ -39,7 +39,7 @@ function Root() {
 					<Link to={"/register"}>
 						<Button
 							className={
-								"transition-all duration-300 inline-flex items-center justify-center px-36 py-8 bg-accent rounded-lg data-[hover]:scale-105 shadow-black/40 shadow-lg"
+								"transition-all duration-300 inline-flex items-center justify-center px-36 py-6 bg-accent rounded-lg data-[hover]:scale-105 shadow-black/40 shadow-lg"
 							}>
 							<h3 className="text-white font-medium">Sign Up</h3>
 						</Button>
@@ -78,7 +78,7 @@ function Root() {
 						optimized revision process.
 					</p>
 				</div>
-				<div className="w-full px-28 grid grid-cols-3 place-items-stretch gap-16 mt-24">
+				<div className="w-full px-8 grid grid-cols-3 place-items-stretch gap-16 mt-24">
 					<DynamicBodyCard
 						header={
 							<h2 className="text-white font-medium text-center">
@@ -94,9 +94,8 @@ function Root() {
 										className="w-7 h-7"
 									/>
 									<p className="text-white">
-										Record your lectures with a 3 hour
-										recording time for the best lesson
-										engagement
+										Record your lectures with a long
+										recording time for full lecture capture
 									</p>
 								</div>
 								<div className="flex flex-row items-center justify-center gap-3">
@@ -107,8 +106,7 @@ function Root() {
 									/>
 									<p className="text-white">
 										Filter out all distractions with our
-										nosie filter feature for a better
-										recording quality
+										nosie filter feature
 									</p>
 								</div>
 								<div className="flex flex-row items-center justify-center gap-3">
@@ -119,7 +117,7 @@ function Root() {
 									/>
 									<p className="text-white">
 										Say goodbye to missed information with
-										our main subject voice focusing feature
+										our lecturer voice focus feature
 									</p>
 								</div>
 							</div>
@@ -162,8 +160,8 @@ function Root() {
 										className="w-8 h-8"
 									/>
 									<p className="text-white">
-										Format your transcription with a clear
-										title and body for better readability
+										Format your transcriptions with a clear
+										title and body
 									</p>
 								</div>
 								<div className="flex flex-row items-center justify-center gap-3">
@@ -173,8 +171,8 @@ function Root() {
 										className="w-8 h-8"
 									/>
 									<p className="text-white">
-										Create summary of all of your notes with
-										for a quick overview of your lecture
+										Create summaries of your notes for a
+										quick overview of your lectures
 									</p>
 								</div>
 							</div>

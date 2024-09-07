@@ -2,9 +2,9 @@ import { create } from "zustand";
 
 const useAuthStore = create((set, get) => ({
 	user: null,
-	setAuthUser: (newUser) => set({ user: newUser }),
-	resetAuthUser: () => set({ user: null }),
-	isLoggedIn: () => get((state) => (state.user ? true : false)),
+	isLoggedIn: false,
+	setAuthUser: (newUser) => set({ user: newUser, isLoggedIn: true }),
+	resetAuthUser: () => set({ user: null, isLoggedIn: false }),
 }));
 
 export default useAuthStore;

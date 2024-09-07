@@ -1,6 +1,6 @@
 import React from "react";
 
-function Section({ color, className = null, children }) {
+function Section({ color, py_override = false, className = null, children }) {
 	let sectionColor;
 	switch (color) {
 		case "white":
@@ -24,7 +24,9 @@ function Section({ color, className = null, children }) {
 	}
 	return (
 		<section
-			className={`w-full py-28 bg-cover bg-no-repeat ${sectionColor}`}>
+			className={`w-full ${
+				py_override ? "" : "py-28"
+			}  bg-cover bg-no-repeat ${sectionColor} ${className}`}>
 			{children}
 		</section>
 	);

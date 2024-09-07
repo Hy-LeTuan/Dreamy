@@ -12,7 +12,7 @@ const decodeTokenAndSetStore = (accessToken) => {
 		email: decoded.email,
 	};
 
-	useAuthStore.setState({ user: user });
+	useAuthStore.setState({ user: user, isLoggedIn: true });
 };
 
 const saveToken = (accessToken, refreshToken) => {
@@ -65,7 +65,7 @@ const login = async (data) => {
 		// decode and set to auth store
 		decodeTokenAndSetStore(accessToken);
 
-		return response;
+		return { status: "success" };
 	} catch (e) {
 		if (e.response?.status == 401) {
 			throw new Error("Username and password does not match");
@@ -77,7 +77,7 @@ const logout = () => {
 	Cookies.remove("access");
 	Cookies.remove("refresh");
 
-	useAuthStore.setState({ user: null });
+	useAuthStore.setState({ user: null, isLoggedIn: false });
 };
 
-export { login };
+export { login, logout };
