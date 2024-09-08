@@ -10,13 +10,19 @@ from django.core.exceptions import (
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    secondary_email = serializers.EmailField(required=False, allow_blank=True)
 
     class Meta:
         model = User
-        fields = ["username", "email", "phone", "password"]
+        fields = ["username", "email", "secondary_email", "phone", "password"]
 
     def validate(self, data):
-        data = super().validate(data)
+        # check for empty secondary email
+        if data["secondary_email"] == "null" or data["secondary_email"] == None or data["secondary_email"] == "" or not data["secondary_email"]:
+            data["secondary_email"] = data["email"]
+            print(f"set secondary email to: {data['secondary_email']}")
+
+        # validate password with Django hash functions
         user_password = data["password"]
 
         try:
@@ -27,6 +33,8 @@ class UserSerializer(serializers.ModelSerializer):
 
         user_password = make_password(user_password)
         data["password"] = user_password
+
+        data = super().validate(data)
 
         return data
 

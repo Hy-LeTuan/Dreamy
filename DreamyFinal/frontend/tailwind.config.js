@@ -20,6 +20,15 @@ export default {
 			transitionProperty: {
 				width: "width",
 			},
+			animation: {
+				fadeIn: "fadeIn 0.4s ease-in-out",
+			},
+			keyframes: {
+				fadeIn: {
+					"0%": { opacity: 0, transform: "translateY(-25px)" },
+					"100%": { opacity: 1, transform: "none" },
+				},
+			},
 		},
 	},
 	plugins: [],

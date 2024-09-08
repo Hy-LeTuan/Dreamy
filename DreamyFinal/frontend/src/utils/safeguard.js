@@ -3,4 +3,20 @@ function safeguardFromSpecialChars(str) {
 	return specialChars.test(str);
 }
 
-export { safeguardFromSpecialChars };
+function safeguardFromWrongEmailFormat(email) {
+	if (email.includes("@")) {
+		const [first_part, second_part] = email.split("@");
+
+		// check for empty parts after splitting
+		if (!first_part || !second_part) {
+			return true;
+		}
+		// check for invalid link
+		else if (!second_part.includes(".com")) return true;
+		else return false;
+	} else {
+		return true;
+	}
+}
+
+export { safeguardFromSpecialChars, safeguardFromWrongEmailFormat };

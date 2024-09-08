@@ -9,9 +9,11 @@ function AuthFormInputField({
 	errorMessage,
 	isError,
 	onChangeFunction,
+	value = "",
+	className = null,
 }) {
 	return (
-		<Field className={"flex flex-col gap-2 w-full"}>
+		<Field className={`flex flex-col gap-2 w-full ${className}`}>
 			<Label>
 				<p className="text-sm text-neutral-500">{label}</p>
 			</Label>
@@ -22,6 +24,7 @@ function AuthFormInputField({
 						: "!border-black/5 data-[focus]:!border-blue-500 data-[hover]:!bg-gray-400/10"
 				}`}
 				name={name}
+				value={value}
 				type={type}
 				placeholder={placeholder}
 				onChange={(e) => onChangeFunction(e)}

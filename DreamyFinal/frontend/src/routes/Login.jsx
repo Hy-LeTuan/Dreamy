@@ -1,9 +1,9 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Field, Label, Input, Description, Button } from "@headlessui/react";
-import ButtonFormComponent from "../components/ButtonFormComponent.jsx";
 import Section from "../components/Section";
+import AuthPageHeader from "../components/AuthPageHeader.jsx";
+import ButtonFormComponent from "../components/ButtonFormComponent.jsx";
 import AuthFormInputField from "../components/AuthFormInputField.jsx";
 import useAuthStore from "../store/authStore.js";
 import { login } from "../utils/auth.js";
@@ -26,11 +26,11 @@ function Login() {
 		password: null,
 	});
 
-	// error state and error message
+	// initialize error state and error message
 	const [isError, setIsError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 
-	// login input management
+	// event for login input change
 	const onLoginInputChange = (e) => {
 		// check for special symbols when typing for better design
 		if (e.currentTarget.name == "username") {
@@ -49,6 +49,7 @@ function Login() {
 		});
 	};
 
+	// event for login submit button pressed
 	const onLoginInputSubmit = async (e) => {
 		e.preventDefault();
 		setIsLoading(true);
@@ -56,19 +57,26 @@ function Login() {
 		const username = userLoginInput.username;
 		const password = userLoginInput.password;
 
-		// check for any remaining errors before submitting forms
+		// check for any remaining errors before submitting form
 		if (isError) {
 			setIsLoading(false);
 			return;
 		}
 
+		// check for empty username
+		if (username == "" || !username) {
+			setIsError(true);
+			setErrorMessage("Username cannot be empty");
+			return;
+		}
+
 		try {
+			setIsLoading(true);
+
 			const response = await login({
 				username: [username],
 				password: [password],
 			});
-
-			setIsLoading(true);
 
 			if (response.status == "success") {
 				setIsLoading(false);
@@ -79,24 +87,16 @@ function Login() {
 				}, 500);
 			}
 		} catch (e) {
+			setIsLoading(false);
 			setIsError(true);
 			setErrorMessage("Username and password does not match");
-			setIsLoading(false);
 			console.log(e.message);
 		}
 	};
 
 	return (
 		<>
-			<div className="w-full px-16 py-2 flex flex-row justify-start items-center bg-secondary">
-				<Link to={"/"} className="group">
-					<img
-						src="/src/assets/icons/dreamer-icon.svg"
-						alt="dreamer icon"
-						className="transition-transform duration-300 group-hover:scale-110 w-12 h-12"
-					/>
-				</Link>
-			</div>
+			<AuthPageHeader />
 			<Section
 				color={"secondary"}
 				py_override={true}
@@ -126,6 +126,7 @@ function Login() {
 									errorMessage={errorMessage}
 									isError={isError}
 									onChangeFunction={onLoginInputChange}
+									value={userLoginInput.username}
 								/>
 								<AuthFormInputField
 									name={"password"}
@@ -135,6 +136,7 @@ function Login() {
 									errorMessage={null}
 									isError={false}
 									onChangeFunction={onLoginInputChange}
+									value={userLoginInput.password}
 								/>
 								<Link
 									to={"/reset-password"}
@@ -176,7 +178,7 @@ function Login() {
 								Don't have an account?{" "}
 							</span>
 							<Link to={"/register"} className="italic">
-								<span className=" underline-offset-4 text-accent hover:underline">
+								<span className=" underline-offset-4 text-accent hover:underline text-base">
 									Create account{" "}
 								</span>
 								<span className="text-neutral-500">&gt;</span>
