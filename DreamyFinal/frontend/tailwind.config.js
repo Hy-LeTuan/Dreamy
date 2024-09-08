@@ -8,6 +8,7 @@ export default {
 				secondary: "#DAF5FF",
 				"secondary-green": "#BDE0A4",
 				accent: "#6150C9",
+				alert: "#F64740",
 			},
 			fontFamily: {
 				header: ['"Raleway"', "sans-serif"],
@@ -15,6 +16,9 @@ export default {
 			},
 			backgroundImage: {
 				"mountain-image": "url('/src/assets/images/mountain.png')",
+			},
+			transitionProperty: {
+				width: "width",
 			},
 		},
 	},
