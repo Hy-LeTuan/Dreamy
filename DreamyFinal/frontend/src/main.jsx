@@ -6,6 +6,7 @@ import Root from "./routes/Root";
 import Register from "./routes/Register";
 import Login from "./routes/Login";
 import Logout from "./routes/Logout";
+import ResetPassword from "./routes/ResetPassword";
 
 const router = createBrowserRouter([
 	{
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
 	{
 		path: "logout/",
 		element: <Logout />,
+	},
+	{
+		path: "reset-password/",
+		element: <ResetPassword />,
 	},
 ]);
 

@@ -44,7 +44,7 @@ function Register() {
 		password: "",
 	});
 
-	// input state to collect inputs
+	// initialize input state to collect inputs
 	const [userRegisterInput, setUserRegisterInput] = useState({
 		username: null,
 		email: null,
@@ -54,7 +54,7 @@ function Register() {
 		confirm_password: null,
 	});
 
-	// event for register input change
+	// define event for collecting input from fields
 	const onRegisterInputChange = (e) => {
 		const name = e.currentTarget.name;
 		const value = e.currentTarget.value;
@@ -315,7 +315,7 @@ function Register() {
 												Already have an account?{" "}
 											</span>
 											<Link
-												to={"/register"}
+												to={"/login"}
 												className="italic">
 												<span className=" underline-offset-4 text-accent hover:underline">
 													Login{" "}
@@ -439,7 +439,7 @@ function Register() {
 										type="button"
 										onClick={onProgressButtonClick}
 										className={
-											"transition-transform px-6 py-2 bg-accent rounded-lg hover:scale-105"
+											"transition-transform px-10 py-2 bg-accent rounded-lg hover:scale-105"
 										}>
 										<h6 className="text-white font-medium">
 											Continue
