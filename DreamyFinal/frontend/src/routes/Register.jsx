@@ -272,7 +272,7 @@ function Register() {
 							again and let's get back to learning
 						</p>
 					</div>
-					<div className="col-span-1 h-[560px] bg-white flex flex-col items-start justify-between pt-10 pb-4 px-12 gap-10 rounded-xl">
+					<div className="col-span-1 h-[580px] bg-white flex flex-col items-start justify-between pt-10 pb-4 px-12 gap-10 rounded-xl">
 						<div className="w-full flex flex-col items-start justify-start gap-8">
 							<h2 className="font-medium text-accent">
 								Register Information

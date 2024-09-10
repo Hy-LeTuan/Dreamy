@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "@headlessui/react";
+import { Button, Field, Input } from "@headlessui/react";
 import AuthPageHeader from "../components/AuthPageHeader";
 import Section from "../components/Section";
 import AuthFormInputField from "../components/AuthFormInputField";
@@ -107,12 +107,13 @@ function ResetPassword() {
 			...userResetInput,
 			[name]: value,
 		});
-
-		console.log(userResetInput);
 	};
 
 	// define event to send OTP
 	const onSendOTPButtonClick = async () => {
+		// set loading state
+		setIsLoading(true);
+
 		// check for remaining errors
 		Object.entries(isError).forEach(([key, value]) => {
 			if (value == true) return;
@@ -128,6 +129,7 @@ function ResetPassword() {
 				...errorMessage,
 				username: "Username cannot be empty",
 			});
+			setIsLoading(false);
 			return;
 		} else if (userResetInput.email == "" || !userResetInput.email) {
 			setIsError({
@@ -138,22 +140,64 @@ function ResetPassword() {
 				...errorMessage,
 				email: "Email cannot be empty",
 			});
+			setIsLoading(false);
 			return;
 		}
 
-		// initialize form data
-		const registerFormData = new FormData();
-
-		Object.entries(userResetInput).forEach(([key, value]) => {
-			registerFormData.append(key, value);
-		});
-
 		// call send OTP function
 		try {
+			const response = await axiosInstance.get(
+				`users/otp/${userResetInput.username}/${userResetInput.email}`
+			);
+			console.log(response);
+			setIsLoading(false);
+			handleNext();
 		} catch (e) {
-			console.log(e);
+			setIsLoading(false);
+			const data = e.response?.data;
+			console.log(e.response.data);
+
+			// error loggin based on what went wrong
+			Object.entries(data).forEach(([key, value]) => {
+				if (key == "detail" && value == "Not found.") {
+					setErrorMessage({
+						...errorMessage,
+						username:
+							"Username not found, please check your username",
+					});
+					setIsError({ ...isError, username: true });
+				} else {
+					setErrorMessage({ ...errorMessage, [key]: [value] });
+					setIsError({ ...isError, [key]: true });
+				}
+				console.log(
+					`Respone data has key of: ${key} and value of: ${value}`
+				);
+			});
 		}
 	};
+
+	// define event to control OTP form
+	const input1Ref = useRef(null);
+	const input2Ref = useRef(null);
+	const input3Ref = useRef(null);
+	const input4Ref = useRef(null);
+	const input5Ref = useRef(null);
+	const input6Ref = useRef(null);
+
+	const handleInputChange = (e, nextInputRef) => {
+		if (e.target.value.length === 1 && nextInputRef) {
+			nextInputRef.current.focus();
+		}
+	};
+
+	const handleKeyDown = (e, prevInputRef) => {
+		if (e.key === "Backspace" && !e.target.value && prevInputRef) {
+			prevInputRef.current.focus();
+		}
+	};
+
+	// define event to reset password
 
 	return (
 		<>
@@ -170,69 +214,171 @@ function ResetPassword() {
 									Forgot your password?
 								</h2>
 							</div>
-							<div className="flex flex-col gap-8 justify-start items-start">
-								{progressIndex == 0 && (
-									<>
-										<AuthFormInputField
-											name={"username"}
-											type={"text"}
-											label={"Registered Username"}
-											placeholder={"Your username"}
-											errorMessage={errorMessage.username}
-											isError={isError.username}
-											onChangeFunction={
-												onResetInputChange
-											}
-											value={userResetInput.username}
-											className={"animate-fadeIn"}
-										/>
-										<AuthFormInputField
-											name={"email"}
-											type={"text"}
-											label={"Registered Email"}
-											placeholder={"Your email"}
-											errorMessage={errorMessage.email}
-											isError={isError.email}
-											onChangeFunction={
-												onResetInputChange
-											}
-											value={userResetInput.email}
-											className={"animate-fadeIn"}
-										/>
-										<div className="animate-fadeIn">
-											<span className="text-neutral-500 italic">
-												Remebered your password? Return
-												to{" "}
+							{progressIndex == 0 && (
+								<div className="flex flex-col gap-8 justify-start items-start">
+									<AuthFormInputField
+										name={"username"}
+										type={"text"}
+										label={"Registered Username"}
+										placeholder={"Your username"}
+										errorMessage={errorMessage.username}
+										isError={isError.username}
+										onChangeFunction={onResetInputChange}
+										value={userResetInput.username}
+										className={"animate-fadeIn"}
+									/>
+									<AuthFormInputField
+										name={"email"}
+										type={"text"}
+										label={"Registered Email"}
+										placeholder={
+											"Your main or secondary email"
+										}
+										errorMessage={errorMessage.email}
+										isError={isError.email}
+										onChangeFunction={onResetInputChange}
+										value={userResetInput.email}
+										className={"animate-fadeIn"}
+									/>
+									<div className="animate-fadeIn">
+										<span className="text-neutral-500 italic">
+											Remebered your password? Return to{" "}
+										</span>
+										<Link to={"/login"} className="italic">
+											<span className=" underline-offset-4 text-accent hover:underline">
+												Login{" "}
 											</span>
-											<Link
-												to={"/login"}
-												className="italic">
-												<span className=" underline-offset-4 text-accent hover:underline">
-													Login{" "}
-												</span>
-												<span className="text-neutral-500">
-													&gt;
-												</span>
-											</Link>
+											<span className="text-neutral-500">
+												&gt;
+											</span>
+										</Link>
+									</div>
+								</div>
+							)}
+							{progressIndex == 1 && (
+								<>
+									<div className="w-full h-[200px] flex flex-col gap-4">
+										<p className="animate-fadeIn text-sm text-neutral-500">
+											Enter the OTP you received here
+										</p>
+
+										<div className="w-full flex flex-col gap-8">
+											<div className="w-full flex flex-row justify-between items-center">
+												<Input
+													ref={input1Ref}
+													className={
+														"animate-fadeIn font-header font-medium text-accent text-center text-3xl w-20 h-24 border-[1px] border-black rounded-lg data-[focus]:border-blue-400"
+													}
+													type="text"
+													maxLength={1}
+													onChange={(e) =>
+														handleInputChange(
+															e,
+															input2Ref
+														)
+													}
+												/>
+												<Input
+													ref={input2Ref}
+													className={
+														"animate-fadeIn font-header font-medium text-accent text-center text-3xl w-20 h-24 border-[1px] border-black rounded-lg data-[focus]:border-blue-400"
+													}
+													type="text"
+													maxLength={1}
+													onChange={(e) =>
+														handleInputChange(
+															e,
+															input3Ref
+														)
+													}
+													onKeyDown={(e) =>
+														handleKeyDown(
+															e,
+															input1Ref
+														)
+													}
+												/>
+												<Input
+													ref={input3Ref}
+													className={
+														"animate-fadeIn font-header font-medium text-accent text-center text-3xl w-20 h-24 border-[1px] border-black rounded-lg data-[focus]:border-blue-400"
+													}
+													type="text"
+													maxLength={1}
+													onChange={(e) =>
+														handleInputChange(
+															e,
+															input4Ref
+														)
+													}
+													onKeyDown={(e) =>
+														handleKeyDown(
+															e,
+															input2Ref
+														)
+													}
+												/>
+											</div>
+											<div className="w-full flex flex-row justify-between items-center">
+												<Input
+													ref={input4Ref}
+													className={
+														"animate-fadeIn font-header font-medium text-accent text-center text-3xl w-20 h-24 border-[1px] border-black rounded-lg data-[focus]:border-blue-400"
+													}
+													type="text"
+													maxLength={1}
+													onChange={(e) =>
+														handleInputChange(
+															e,
+															input5Ref
+														)
+													}
+													onKeyDown={(e) =>
+														handleKeyDown(
+															e,
+															input3Ref
+														)
+													}
+												/>
+												<Input
+													ref={input5Ref}
+													className={
+														"animate-fadeIn font-header font-medium text-accent text-center text-3xl w-20 h-24 border-[1px] border-black rounded-lg data-[focus]:border-blue-400"
+													}
+													type="text"
+													maxLength={1}
+													onChange={(e) =>
+														handleInputChange(
+															e,
+															input6Ref
+														)
+													}
+													onKeyDown={(e) =>
+														handleKeyDown(
+															e,
+															input4Ref
+														)
+													}
+												/>
+												<Input
+													ref={input6Ref}
+													className={
+														"animate-fadeIn font-header font-medium text-accent text-center text-3xl w-20 h-24 border-[1px] border-black rounded-lg data-[focus]:border-blue-400"
+													}
+													type="text"
+													onKeyDown={(e) =>
+														handleKeyDown(
+															e,
+															input5Ref
+														)
+													}
+													axLength={1}
+												/>
+											</div>
 										</div>
-									</>
-								)}
-								{progressIndex == 1 && (
-									<>
-										<AuthFormInputField
-											name={"otp"}
-											type={"text"}
-											label={"OTP we sent"}
-											placeholder={"Your OTP"}
-											errorMessage={null}
-											isError={null}
-											onChangeFunction={null}
-											value={null}
-											className={"animate-fadeIn"}
-										/>
-									</>
-								)}
-							</div>
+									</div>
+								</>
+							)}
 						</div>
 						<div className="w-full flex flex-row items-center justify-between">
 							<Button
@@ -250,8 +396,9 @@ function ResetPassword() {
 									type="button"
 									onClick={onSendOTPButtonClick}
 									className={
-										"shadow-md transition-transform px-10 py-2 bg-accent rounded-lg hover:scale-105"
-									}>
+										"shadow-md transition-transform px-10 py-2 disabled:bg-accent/80 bg-accent rounded-lg hover:scale-105"
+									}
+									disabled={isLoading}>
 									<h6 className="text-white font-medium">
 										Send OTP
 									</h6>
@@ -261,7 +408,7 @@ function ResetPassword() {
 									type="button"
 									onClick={null}
 									className={
-										"shadow-md transition-transform px-10 py-2 bg-accent rounded-lg hover:scale-105"
+										"shadow-md transition-transform px-10 py-2  bg-accent rounded-lg hover:scale-105"
 									}>
 									<h6 className="text-white font-medium">
 										Reset Password

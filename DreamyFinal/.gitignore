@@ -33,3 +33,5 @@ d*.log
 *.pyc
 __pycache__/
 media/
+
+.env

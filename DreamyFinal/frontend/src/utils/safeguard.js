@@ -1,5 +1,5 @@
 function safeguardFromSpecialChars(str) {
-	const specialChars = /[!@#$%^&*(),.?":{}|<>]/;
+	const specialChars = /[!@#$%^&*(),.?":{}|<> ]/;
 	return specialChars.test(str);
 }
 
