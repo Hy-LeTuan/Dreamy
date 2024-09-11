@@ -11,6 +11,8 @@ class User(AbstractUser):
         verbose_name="Secondary email", blank=True, null=True)
 
     password_reset_otp = models.CharField(max_length=6, null=True, blank=True)
+    password_reset_otp_time = models.CharField(
+        null=True, blank=True, max_length=30)
 
     # automatically set USERNAME_FIELD to username
     REQUIRED_FIELDS = ["email"]

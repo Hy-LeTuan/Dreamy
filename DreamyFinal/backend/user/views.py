@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 
 from datetime import datetime, timedelta
 from user.models import User
-from user.utils import generate_email, generate_otp_secret, get_totp
+from user.utils import generate_email, generate_otp_secret, get_totp, verify_otp, verify_otp_time
 
 
 class CreateUserAPIView(generics.CreateAPIView):
@@ -33,23 +33,31 @@ class RetrieveUserAndSendOTPAPIView(generics.RetrieveAPIView):
         secondary_email = instance.secondary_email
         user_typed_email = self.kwargs["email"]
 
-        # send OTP after validating email
-        otp_secret = generate_otp_secret()
-        otp = get_totp(otp_secret=otp_secret)
-
-        instance.password_reset_otp = otp_secret
-        instance.save()
-
         if email != user_typed_email and (not secondary_email or user_typed_email != secondary_email):
             return Response(data={
                 "email": "Your email does not match with registered emails",
             }, status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
-            send_mail("This is subject", "Here is the message",
-                      from_email=None,
-                      recipient_list=["letuanhy1507@gmail.com"],
-                      html_message=generate_email(instance.username, otp.now()))
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            # send OTP after validating email
+            otp_secret = generate_otp_secret()
+            totp = get_totp(otp_secret=otp_secret)
+            otp = totp.now()
+            print(f"----OTP: {otp}")
+            email_result = send_mail("This is subject", "Here is the message",
+                                     from_email=None,
+                                     recipient_list=["letuanhy1507@gmail.com"],
+                                     html_message=generate_email(instance.username, otp))
+
+            print(f"Email result ---- {email_result}")
+            if (email_result):
+                instance.password_reset_otp = otp
+                instance.password_reset_otp_time = str(datetime.now())
+                instance.save()
+                return Response(data=serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(data={
+                    "message": "Cannot send OTP request to your email, please try again",
+                }, status=status.HTTP_502_BAD_GATEWAY)
 
 
 class RetrieveUserAndValidateOTPAPIView(generics.RetrieveUpdateAPIView):
@@ -57,60 +65,45 @@ class RetrieveUserAndValidateOTPAPIView(generics.RetrieveUpdateAPIView):
     lookup_field = "id"
     queryset = User.objects.all()
 
-    # def retrieve(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance)
-
-    #     # get entered otp
-    #     user_type_otp = self.kwargs["otp"]
-    #     stored_otp_secret = instance.password_reset_otp
-
-    #     totp = get_totp(stored_otp_secret)
-
-    #     # verify otp
-    #     if (totp.verify(user_type_otp)):
-    #         return Response(data=serializer.data, status=status.HTTP_200_OK)
-    #     else:
-    #         return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
-
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
         # get entered otp
         user_typed_otp = kwargs.get("otp")
-        stored_otp_secret = instance.password_rest_otp
-        totp = get_totp(stored_otp_secret)
+        stored_otp = instance.password_reset_otp
+        stored_otp_time = instance.password_reset_otp_time
 
         print("---------------------")
         print(f"User typed: {user_typed_otp}")
+        print(f"Stored otp: {stored_otp}")
+        print(f"Stored otp time: {stored_otp_time}")
 
         # verify otp
-        if (totp.verify(user_typed_otp)):
-            # perform update and validation with new password
-            serializer = self.get_serializer(
-                instance, data=request.data, partial=partial)
-            serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
+        if (verify_otp_time(stored_otp_time)):
+            if (verify_otp(stored_otp, user_typed_otp)):
+                # perform update and validation with new password
+                serializer = self.get_serializer(
+                    instance, data=request.data, partial=partial)
+                serializer.is_valid(raise_exception=True)
+                # self.perform_update(serializer)
 
-            if getattr(instance, '_prefetched_objects_cache', None):
-                # If 'prefetch_related' has been applied to a queryset, we need to
-                # forcibly invalidate the prefetch cache on the instance.
-                instance._prefetched_objects_cache = {}
-            return Response(serializer.data)
-        else:
-            time_remaining = totp.interval - datetime.now().timestamp() % totp.interval
-
-            if time_remaining <= 0:
-                # OTP passed allowed time
-                return Response({
-                    "is_timeout": True,
-                }, status=status.HTTP_406_NOT_ACCEPTABLE)
+                if getattr(instance, '_prefetched_objects_cache', None):
+                    # If 'prefetch_related' has been applied to a queryset, we need to
+                    # forcibly invalidate the prefetch cache on the instance.
+                    instance._prefetched_objects_cache = {}
+                return Response(serializer.data)
             else:
                 # wrong OTP
+                print("wrong otp ------")
                 return Response({
-                    "is_timeout": False,
+                    "timeout": False,
                 }, status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            # OTP passed allowed time
+            return Response({
+                "timeout": True,
+            }, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 class MyTokenObtainPairView(TokenObtainPairView):

@@ -1,4 +1,5 @@
 import pyotp
+import datetime
 
 
 def generate_email(username, otp_code, interval: int = 30):
@@ -148,3 +149,21 @@ def generate_otp_secret():
 
 def get_totp(otp_secret):
     return pyotp.TOTP(otp_secret)
+
+
+def verify_otp(otp, user_typed_otp):
+    return otp == user_typed_otp
+
+
+def verify_otp_time(stored_time: str, interval=30):
+    """
+    stored_time: the time that the OTP is sent to the user in ISO date time format 
+    """
+    stored_time_converted = datetime.datetime.fromisoformat(stored_time)
+
+    time_difference = datetime.datetime.now() - stored_time_converted
+
+    if (time_difference.days <= 0 and time_difference.seconds <= interval):
+        return True
+    else:
+        return False

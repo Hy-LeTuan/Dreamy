@@ -10,6 +10,6 @@ urlpatterns = [
     path("users/token/refresh", TokenRefreshView.as_view()),
     path("users/otp/<str:username>/<str:email>",
          user_views.RetrieveUserAndSendOTPAPIView.as_view()),
-    path("users/otp/reset-password/<int:id>",
+    path("users/otp/reset-password/<int:id>/<str:otp>",
          user_views.RetrieveUserAndValidateOTPAPIView.as_view()),
 ]

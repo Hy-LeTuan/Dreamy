@@ -18,22 +18,17 @@ class UserSerializer(serializers.ModelSerializer):
                   "secondary_email", "phone", "password"]
 
     def validate(self, data):
-        # check for empty secondary email
-        if data["secondary_email"] == "null" or data["secondary_email"] == None or data["secondary_email"] == "" or not data["secondary_email"]:
-            data["secondary_email"] = data["email"]
-            print(f"set secondary email to: {data['secondary_email']}")
-
         # validate password with Django hash functions
-        user_password = data["password"]
+        if (data.get("password")):
+            user_password = data["password"]
+            try:
+                validate_password(password=user_password)
+            except ValidationError as valError:
+                raise serializers.ValidationError(
+                    {"help-message": password_validators_help_texts(), "message": valError.messages})
 
-        try:
-            validate_password(password=user_password)
-        except ValidationError as valError:
-            raise serializers.ValidationError(
-                {"help message": password_validators_help_texts(), "error": valError.messages})
-
-        user_password = make_password(user_password)
-        data["password"] = user_password
+            user_password = make_password(user_password)
+            data["password"] = user_password
 
         data = super().validate(data)
 
