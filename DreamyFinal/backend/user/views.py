@@ -54,25 +54,63 @@ class RetrieveUserAndSendOTPAPIView(generics.RetrieveAPIView):
 
 class RetrieveUserAndValidateOTPAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
-    lookup_url_kwarg = "username"
-    lookup_field = "username"
+    lookup_field = "id"
     queryset = User.objects.all()
 
-    def retrieve(self, request, *args, **kwargs):
+    # def retrieve(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance)
+
+    #     # get entered otp
+    #     user_type_otp = self.kwargs["otp"]
+    #     stored_otp_secret = instance.password_reset_otp
+
+    #     totp = get_totp(stored_otp_secret)
+
+    #     # verify otp
+    #     if (totp.verify(user_type_otp)):
+    #         return Response(data=serializer.data, status=status.HTTP_200_OK)
+    #     else:
+    #         return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance)
 
         # get entered otp
-        user_type_otp = self.kwargs["otp"]
-        stored_otp_secret = instance.password_reset_otp
-
+        user_typed_otp = kwargs.get("otp")
+        stored_otp_secret = instance.password_rest_otp
         totp = get_totp(stored_otp_secret)
 
+        print("---------------------")
+        print(f"User typed: {user_typed_otp}")
+
         # verify otp
-        if (totp.verify(user_type_otp)):
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        if (totp.verify(user_typed_otp)):
+            # perform update and validation with new password
+            serializer = self.get_serializer(
+                instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+
+            if getattr(instance, '_prefetched_objects_cache', None):
+                # If 'prefetch_related' has been applied to a queryset, we need to
+                # forcibly invalidate the prefetch cache on the instance.
+                instance._prefetched_objects_cache = {}
+            return Response(serializer.data)
         else:
-            return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+            time_remaining = totp.interval - datetime.now().timestamp() % totp.interval
+
+            if time_remaining <= 0:
+                # OTP passed allowed time
+                return Response({
+                    "is_timeout": True,
+                }, status=status.HTTP_406_NOT_ACCEPTABLE)
+            else:
+                # wrong OTP
+                return Response({
+                    "is_timeout": False,
+                }, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 class MyTokenObtainPairView(TokenObtainPairView):

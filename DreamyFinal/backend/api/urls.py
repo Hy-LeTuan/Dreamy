@@ -9,5 +9,7 @@ urlpatterns = [
     path("users/token", user_views.MyTokenObtainPairView.as_view()),
     path("users/token/refresh", TokenRefreshView.as_view()),
     path("users/otp/<str:username>/<str:email>",
-         user_views.RetrieveUserAndSendOTPAPIView.as_view())
+         user_views.RetrieveUserAndSendOTPAPIView.as_view()),
+    path("users/otp/reset-password/<int:id>",
+         user_views.RetrieveUserAndValidateOTPAPIView.as_view()),
 ]

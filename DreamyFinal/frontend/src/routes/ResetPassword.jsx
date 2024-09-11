@@ -14,9 +14,26 @@ function ResetPassword() {
 	// navigator
 	const navigate = useNavigate();
 
+	// user object to validate information after entering correct email and username and received an otp
+	const [tempUserResetPassword, setTempUserResetPassword] = useState({
+		user_id: null,
+		username: null,
+		email: null,
+		secondary_email: null,
+		phone: null,
+	});
+
 	// progress management state
-	const tabsNumber = 2;
+	const tabsNumber = 3;
 	const [progressIndex, setProgressIndex] = useState(0);
+
+	// initialize input state to collect inputs
+	const [userResetInput, setUserResetInput] = useState({
+		username: "",
+		email: "",
+		password: "",
+		confirm_password: "",
+	});
 
 	// define event for continue and return button
 	const handleNext = () => {
@@ -43,12 +60,6 @@ function ResetPassword() {
 	});
 
 	const [errorMessage, setErrorMessage] = useState({
-		username: "",
-		email: "",
-	});
-
-	// initialize input state to collect inputs
-	const [userResetInput, setUserResetInput] = useState({
 		username: "",
 		email: "",
 	});
@@ -150,30 +161,48 @@ function ResetPassword() {
 				`users/otp/${userResetInput.username}/${userResetInput.email}`
 			);
 			console.log(response);
+
+			// set loading state
 			setIsLoading(false);
 			handleNext();
+
+			console.log(response?.data);
+
+			// set user state after loading state for better speed from UI
+			setTempUserResetPassword({
+				...tempUserResetPassword,
+				user_id: response?.data?.id,
+				username: response?.data?.username,
+				email: response?.data?.email,
+				secondary_email: response?.data?.secondary_email,
+				phone: response?.data?.phone,
+			});
+
+			console.log(tempUserResetPassword);
 		} catch (e) {
+			// set loading state
 			setIsLoading(false);
 			const data = e.response?.data;
-			console.log(e.response.data);
 
-			// error loggin based on what went wrong
-			Object.entries(data).forEach(([key, value]) => {
-				if (key == "detail" && value == "Not found.") {
-					setErrorMessage({
-						...errorMessage,
-						username:
-							"Username not found, please check your username",
-					});
-					setIsError({ ...isError, username: true });
-				} else {
-					setErrorMessage({ ...errorMessage, [key]: [value] });
-					setIsError({ ...isError, [key]: true });
-				}
-				console.log(
-					`Respone data has key of: ${key} and value of: ${value}`
-				);
-			});
+			// set error message and state based on what went wrong
+			if (data) {
+				Object.entries(data).forEach(([key, value]) => {
+					if (key == "detail" && value == "Not found.") {
+						setErrorMessage({
+							...errorMessage,
+							username:
+								"Username not found, please check your username",
+						});
+						setIsError({ ...isError, username: true });
+					} else {
+						setErrorMessage({ ...errorMessage, [key]: [value] });
+						setIsError({ ...isError, [key]: true });
+					}
+					console.log(
+						`Respone data has key of: ${key} and value of: ${value}`
+					);
+				});
+			}
 		}
 	};
 
@@ -198,6 +227,30 @@ function ResetPassword() {
 	};
 
 	// define event to reset password
+	const onResetPasswordButtonClick = async () => {
+		console.log("reset button clicked");
+		console.log(input1Ref.current.value);
+
+		// concatenate all input field to form otp string
+		const otp =
+			input1Ref.current.value +
+			input2Ref.current.value +
+			input3Ref.current.value +
+			input4Ref.current.value +
+			input5Ref.current.value +
+			input6Ref.current.value;
+
+		// try {
+		// 	const response = await axiosInstance.patch(
+		// 		`users/otp/reset-password/${tempUserResetPassword.user_id}/${otp}`,
+		// 		{
+		// 			password: "",
+		// 		}
+		// 	);
+		// } catch (e) {
+		// 	console.log(e);
+		// }
+	};
 
 	return (
 		<>
@@ -215,6 +268,45 @@ function ResetPassword() {
 								</h2>
 							</div>
 							{progressIndex == 0 && (
+								<div className="flex flex-col gap-8 justify-start items-start">
+									<AuthFormInputField
+										name={"password"}
+										type={"password"}
+										label={"New Password"}
+										placeholder={"Your new password"}
+										errorMessage={errorMessage.email}
+										isError={isError.email}
+										onChangeFunction={onResetInputChange}
+										value={userResetInput.password}
+										className={"animate-fadeIn"}
+									/>
+									<AuthFormInputField
+										name={"confirm_password"}
+										type={"password"}
+										label={"Confirm Password"}
+										placeholder={"Type your password again"}
+										errorMessage={errorMessage.username}
+										isError={isError.username}
+										onChangeFunction={onResetInputChange}
+										value={userResetInput.confirm_password}
+										className={"animate-fadeIn"}
+									/>
+									<div className="animate-fadeIn">
+										<span className="text-neutral-500 italic">
+											Remebered your password? Return to{" "}
+										</span>
+										<Link to={"/login"} className="italic">
+											<span className=" underline-offset-4 text-accent hover:underline">
+												Login{" "}
+											</span>
+											<span className="text-neutral-500">
+												&gt;
+											</span>
+										</Link>
+									</div>
+								</div>
+							)}
+							{progressIndex == 1 && (
 								<div className="flex flex-col gap-8 justify-start items-start">
 									<AuthFormInputField
 										name={"username"}
@@ -240,22 +332,9 @@ function ResetPassword() {
 										value={userResetInput.email}
 										className={"animate-fadeIn"}
 									/>
-									<div className="animate-fadeIn">
-										<span className="text-neutral-500 italic">
-											Remebered your password? Return to{" "}
-										</span>
-										<Link to={"/login"} className="italic">
-											<span className=" underline-offset-4 text-accent hover:underline">
-												Login{" "}
-											</span>
-											<span className="text-neutral-500">
-												&gt;
-											</span>
-										</Link>
-									</div>
 								</div>
 							)}
-							{progressIndex == 1 && (
+							{progressIndex == 2 && (
 								<>
 									<div className="w-full h-[200px] flex flex-col gap-4">
 										<p className="animate-fadeIn text-sm text-neutral-500">
@@ -372,7 +451,7 @@ function ResetPassword() {
 															input5Ref
 														)
 													}
-													axLength={1}
+													maxLength={1}
 												/>
 											</div>
 										</div>
@@ -391,7 +470,19 @@ function ResetPassword() {
 									Return
 								</h6>
 							</Button>
-							{progressIndex == 0 ? (
+							{progressIndex == 0 && (
+								<Button
+									type="button"
+									onClick={handleNext}
+									className={
+										"shadow-md transition-transform px-10 py-2 disabled:bg-accent/80 bg-accent rounded-lg hover:scale-105"
+									}>
+									<h6 className="text-white font-medium">
+										Continue
+									</h6>
+								</Button>
+							)}
+							{progressIndex == 1 && (
 								<Button
 									type="button"
 									onClick={onSendOTPButtonClick}
@@ -403,10 +494,11 @@ function ResetPassword() {
 										Send OTP
 									</h6>
 								</Button>
-							) : (
+							)}
+							{progressIndex == 2 && (
 								<Button
 									type="button"
-									onClick={null}
+									onClick={onResetPasswordButtonClick}
 									className={
 										"shadow-md transition-transform px-10 py-2  bg-accent rounded-lg hover:scale-105"
 									}>

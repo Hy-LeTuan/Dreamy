@@ -14,7 +14,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "email", "secondary_email", "phone", "password"]
+        fields = ["id", "username", "email",
+                  "secondary_email", "phone", "password"]
 
     def validate(self, data):
         # check for empty secondary email
