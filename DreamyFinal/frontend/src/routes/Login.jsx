@@ -27,19 +27,39 @@ function Login() {
 	});
 
 	// initialize error state and error message
-	const [isError, setIsError] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
+	const [isError, setIsError] = useState({
+		username: false,
+		password: false,
+	});
+	const [errorMessage, setErrorMessage] = useState({
+		username: false,
+		password: false,
+	});
 
 	// event for login input change
 	const onLoginInputChange = (e) => {
 		// check for special symbols when typing for better design
 		if (e.currentTarget.name == "username") {
 			if (safeguardFromSpecialChars(e.currentTarget.value)) {
-				setIsError(true);
-				setErrorMessage("Username cannot contain special symbols");
+				setIsError({
+					...isError,
+					username: true,
+				});
+				setErrorMessage({
+					...errorMessage,
+					username: "Username cannot contain special symbols",
+				});
 			} else {
-				setIsError(false);
+				setIsError({
+					...isError,
+					username: false,
+				});
 			}
+		} else if (e.currentTarget.name == "password") {
+			setIsError({
+				...isError,
+				password: false,
+			});
 		}
 
 		// set input value regardless
@@ -57,16 +77,16 @@ function Login() {
 		const username = userLoginInput.username;
 		const password = userLoginInput.password;
 
-		// check for any remaining errors before submitting form
-		if (isError) {
-			setIsLoading(false);
-			return;
-		}
-
 		// check for empty username
 		if (username == "" || !username) {
-			setIsError(true);
-			setErrorMessage("Username cannot be empty");
+			setIsError({
+				...isError,
+				username: true,
+			});
+			setErrorMessage({
+				...errorMessage,
+				username: "Username cannot be empty",
+			});
 			return;
 		}
 
@@ -80,7 +100,11 @@ function Login() {
 
 			if (response.status == "success") {
 				setIsLoading(false);
-				setIsError(false);
+				setIsError({
+					...isError,
+					username: false,
+					password: false,
+				});
 
 				delayExecution(() => {
 					navigate("/");
@@ -88,8 +112,15 @@ function Login() {
 			}
 		} catch (e) {
 			setIsLoading(false);
-			setIsError(true);
-			setErrorMessage("Username and password does not match");
+			setIsError({
+				...isError,
+				username: true,
+				password: true,
+			});
+			setErrorMessage({
+				...errorMessage,
+				username: "Username and password does not match",
+			});
 			console.log(e.message);
 		}
 	};
@@ -123,8 +154,8 @@ function Login() {
 									type={"text"}
 									label={"Username"}
 									placeholder={"Your username"}
-									errorMessage={errorMessage}
-									isError={isError}
+									errorMessage={errorMessage.username}
+									isError={isError.username}
 									onChangeFunction={onLoginInputChange}
 									value={userLoginInput.username}
 								/>
@@ -133,8 +164,8 @@ function Login() {
 									type={"password"}
 									label={"Password"}
 									placeholder={"Your password"}
-									errorMessage={null}
-									isError={false}
+									errorMessage={errorMessage.password}
+									isError={isError.password}
 									onChangeFunction={onLoginInputChange}
 									value={userLoginInput.password}
 								/>

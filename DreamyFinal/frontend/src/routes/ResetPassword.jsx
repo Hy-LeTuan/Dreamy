@@ -169,10 +169,10 @@ function ResetPassword() {
 		setIsLoading(true);
 
 		// set connection error state
-		setIsError({
-			...isError,
+		setIsError((prevError) => ({
+			...prevError,
 			otp: false,
-		});
+		}));
 
 		setErrorMessage({
 			...errorMessage,
@@ -181,6 +181,7 @@ function ResetPassword() {
 
 		// check for remaining errors
 		Object.entries(isError).forEach(([key, value]) => {
+			console.log(`isError object has key: ${key} and value: ${value}`);
 			if (value == true) return;
 		});
 
@@ -220,8 +221,6 @@ function ResetPassword() {
 			setIsLoading(false);
 			handleNext();
 
-			console.log(response);
-
 			// set user state after loading state for better speed from UI
 			setTempUserResetPassword({
 				...tempUserResetPassword,
@@ -235,12 +234,6 @@ function ResetPassword() {
 			// set otp sent state
 			setIsOTPReceived(true);
 			console.log(tempUserResetPassword);
-
-			if (isError.otp) {
-				console.log("OTP is still error here");
-			} else {
-				console.log("OTP is not error");
-			}
 		} catch (e) {
 			// set loading state
 			setIsLoading(false);
@@ -354,7 +347,7 @@ function ResetPassword() {
 						...errorMessage,
 						password: data.message[0],
 					});
-					setProgressIndex(0);
+					setProgressIndex((state) => 0);
 				} else if (status == 406) {
 					if (data?.timeout) {
 						setIsError({
@@ -497,16 +490,16 @@ function ResetPassword() {
 							{progressIndex == 2 && (
 								<>
 									<div className="w-full h-[200px] flex flex-col gap-4">
-										{isError.otp ? (
+										{isError.otp && (
 											<div className="text-center shadow-sm py-1 px-3 rounded-md w-fit animate-fadeIn text-sm text-white bg-alert">
 												{errorMessage.otp}
 											</div>
-										) : (
+										)}
+										{!isError.otp && (
 											<div className="text-center py-1 px-3 rounded-md w-fit animate-fadeIn text-sm text-neutral-500">
 												Enter the OTP you received here
 											</div>
 										)}
-
 										<div className="w-full flex flex-col gap-8">
 											<div className="w-full flex flex-row justify-between items-center">
 												<Input
