@@ -464,27 +464,29 @@ function ResetPassword() {
 										value={userResetInput.email}
 										className={"animate-fadeIn"}
 									/>
-									{isError.connection && (
-										<div className="animate-fadeIn">
-											<span className="text-alert italic">
-												Oops, we couldn't send you the
-												email for your OTP. Please try
-												again :&#40;
-											</span>
-										</div>
-									)}
-									{isOTPReceived && (
-										<Button
-											className={
-												"animate-fadeIn me-auto px-3 py-2 rounded-lg bg-sky-300 transition-all disabled:bg-sky-300/80 disabled:hover:scale-100 hover:scale-105 shadow-md"
-											}
-											onClick={onSendOTPButtonClick}
-											disabled={isLoading}>
-											<span className="text-white">
-												Resend OTP
-											</span>
-										</Button>
-									)}
+									<div className="animate-fadeIn w-full flex flex-row justify-between">
+										{isError.connection && (
+											<div className="animate-fadeIn order-2">
+												<span className="text-alert italic">
+													We couldn't send you the
+													email for your OTP. Please
+													try again :&#40;
+												</span>
+											</div>
+										)}
+										{isOTPReceived && (
+											<Button
+												className={
+													"animate-fadeIn order-1 me-auto px-3 py-2 rounded-lg bg-sky-300 transition-all disabled:bg-sky-300/80 disabled:hover:scale-100 hover:scale-105 shadow-md"
+												}
+												onClick={onSendOTPButtonClick}
+												disabled={isLoading}>
+												<span className="text-white">
+													Resend OTP
+												</span>
+											</Button>
+										)}
+									</div>
 								</div>
 							)}
 							{progressIndex == 2 && (

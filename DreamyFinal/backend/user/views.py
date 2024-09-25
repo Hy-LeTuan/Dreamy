@@ -7,6 +7,7 @@ from rest_framework import status
 from django.core.mail import send_mail
 
 from datetime import datetime, timedelta
+from global_utils import time_out, set_time_out_for_function
 from user.models import User
 from user.utils import generate_email, generate_otp_secret, get_totp, verify_otp, verify_otp_time
 
@@ -43,12 +44,22 @@ class RetrieveUserAndSendOTPAPIView(generics.RetrieveAPIView):
             totp = get_totp(otp_secret=otp_secret)
             otp = totp.now()
             print(f"----OTP: {otp}")
-            email_result = send_mail("This is subject", "Here is the message",
-                                     from_email=None,
-                                     recipient_list=["letuanhy1507@gmail.com"],
-                                     html_message=generate_email(instance.username, otp))
+            # email_result = send_mail("This is subject", "Here is the message",
+            #                          from_email=None,
+            #                          recipient_list=["letuanhy1507@gmail.com"],
+            #                          html_message=generate_email(instance.username, otp))
+
+            email_result = set_time_out_for_function(
+                timeout=20, time_out_func=time_out, func=send_mail, kwargs={
+                    "subject": "This is the subject",
+                    "message": "Here is the message",
+                    "from_email": None,
+                    "recipient_list": ["letuanhy1507@gmail.com"],
+                    "html_message": generate_email(instance.username, otp)
+                })
 
             print(f"Email result ---- {email_result}")
+
             if (email_result):
                 instance.password_reset_otp = otp
                 instance.password_reset_otp_time = str(datetime.now())
@@ -86,12 +97,13 @@ class RetrieveUserAndValidateOTPAPIView(generics.RetrieveUpdateAPIView):
                 serializer = self.get_serializer(
                     instance, data=request.data, partial=partial)
                 serializer.is_valid(raise_exception=True)
-                self.perform_update(serializer)
+                # self.perform_update(serializer)
 
                 if getattr(instance, '_prefetched_objects_cache', None):
                     # If 'prefetch_related' has been applied to a queryset, we need to
                     # forcibly invalidate the prefetch cache on the instance.
                     instance._prefetched_objects_cache = {}
+
                 return Response(serializer.data)
             else:
                 # wrong OTP
