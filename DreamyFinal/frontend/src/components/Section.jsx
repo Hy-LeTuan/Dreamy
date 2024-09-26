@@ -18,15 +18,21 @@ function Section({ color, py_override = false, className = null, children }) {
 		case "mountain":
 			sectionColor = "bg-mountain-image";
 			break;
+		case "gradient":
+			sectionColor = "bg-gradient-image";
+			break;
 		case "secondary-green":
 			sectionColor = "bg-secondary-green";
+			break;
+		case "none":
+			sectionColor = "bg-transparent";
 			break;
 	}
 	return (
 		<section
 			className={`w-full ${
 				py_override ? "" : "py-28"
-			}  bg-cover bg-no-repeat ${sectionColor} ${className}`}>
+			}  bg-contain bg-no-repeat ${sectionColor} ${className}`}>
 			{children}
 		</section>
 	);
