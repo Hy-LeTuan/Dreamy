@@ -73,12 +73,12 @@ function Header() {
 					</>
 				) : (
 					<>
-						<Button className="transition-colors duration-300 ease-in-out hover:bg-accent hover:text-white rounded-full px-5 py-1 border-accent border-[1px] bg-transparent">
+						<Button className="transition-colors duration-300 ease-in-out hover:bg-accent hover:text-white rounded-full px-5 py-1 border-accent border-[1px] bg-transparent shadow-md">
 							<h6 className="font-medium">
 								<Link to={"/login"}>Log In</Link>
 							</h6>
 						</Button>
-						<Button className="transition-width group rounded-full px-5 py-1 bg-accent flex flex-row justify-center items-center">
+						<Button className="transition-width group rounded-full px-5 py-1 bg-accent flex flex-row justify-center items-center shadow-md">
 							<h6 className="font-medium text-white">
 								<Link>Get Started</Link>
 							</h6>

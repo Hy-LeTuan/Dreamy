@@ -30,9 +30,8 @@ function Section({ color, py_override = false, className = null, children }) {
 	}
 	return (
 		<section
-			className={`w-full ${
-				py_override ? "" : "py-28"
-			}  bg-contain bg-no-repeat ${sectionColor} ${className}`}>
+			className={`w-full ${py_override ? "" : "py-28"}  bg-contain
+            n bg-no-repeat ${sectionColor} ${className}`}>
 			{children}
 		</section>
 	);

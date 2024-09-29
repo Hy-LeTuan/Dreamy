@@ -24,7 +24,7 @@ export default {
 			},
 			animation: {
 				fadeIn: "fadeIn 0.4s ease-in-out",
-				bounceIn: "bounceIn 0.7s ease-out",
+				bounceIn: "bounceIn 0.5s linear",
 			},
 			keyframes: {
 				fadeIn: {
@@ -33,9 +33,9 @@ export default {
 				},
 				bounceIn: {
 					"0%": { width: 0, opacity: 0 },
-					"25%": { width: "24px", opacity: 0.5 },
+					"25%": { width: "28px", opacity: 0.5 },
 					"50%": { width: "38px", opacity: 0.75 },
-					"75%": { width: "32px", opacity: 0.8 },
+					"75%": { width: "30px", opacity: 0.8 },
 					"100%": { width: "auto", opacity: 1 },
 				},
 			},

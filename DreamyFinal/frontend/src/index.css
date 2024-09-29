@@ -32,7 +32,7 @@
 	}
 
 	p {
-		@apply font-body text-xl;
+		@apply font-body text-lg;
 	}
 
 	body {

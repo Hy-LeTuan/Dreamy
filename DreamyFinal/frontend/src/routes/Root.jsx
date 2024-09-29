@@ -16,25 +16,15 @@ function Root() {
 				<Section color={"none"}>
 					<div className="w-full flex flex-col justify-center items-center gap-32">
 						<div className="flex flex-col gap-6">
-							<h1 className="display text-black font-medium text-center">
-								Say hello to{" "}
-								<span className="text-accent italic font-bold">
-									Dreamy
-								</span>
-								, <br /> Your own lecture companion
+							<h1 className="w-3/4 mx-auto display text-black font-medium text-center">
+								We note you dream <br /> together we reach your
+								goals
 							</h1>
-							<h4 className="text-center font-medium">
-								<span className="italic text-accent font-bold">
-									Record,
-								</span>{" "}
-								<span className="italic text-accent font-bold">
-									Trascribe
-								</span>{" "}
-								and{" "}
-								<span className="italic text-accent font-bold">
-									Quiz
-								</span>{" "}
-								yourself on your lectures to ace every exam
+							<h4 className="text-center font-medium w-3/4 mx-auto">
+								Dreamy's advanced features for recording and
+								transcribing help students focus, understand,
+								and strengthen knowledge through quizzes
+								generated from transcripts.
 							</h4>
 						</div>
 						<Link to={"/register"}>
@@ -47,32 +37,6 @@ function Root() {
 								</h3>
 							</Button>
 						</Link>
-						<div className="flex flex-col">
-							<div className="grid grid-cols-3 place-items-stretch gap-36">
-								<SimpleCard className={"min-h-full"}>
-									<h5 className="font-bold">Dreamy Users</h5>
-									<h2 className="font-bold text-accent">
-										8343+
-									</h2>
-								</SimpleCard>
-								<SimpleCard className={"min-h-full"}>
-									<h5 className="font-bold">
-										Transcript Made
-									</h5>
-									<h2 className="font-bold text-accent">
-										8343+
-									</h2>
-								</SimpleCard>
-								<SimpleCard className={"min-h-full"}>
-									<h5 className="font-bold">
-										Quizzes Solved
-									</h5>
-									<h2 className="font-bold text-accent">
-										8343+
-									</h2>
-								</SimpleCard>
-							</div>
-						</div>
 					</div>
 				</Section>
 				<Section color={"white"}>
@@ -91,6 +55,22 @@ function Root() {
 							personalized quizzes for an optimized revision
 							process.
 						</p>
+					</div>
+					<div className="flex flex-col">
+						{/* <div className="grid grid-cols-3 place-items-stretch gap-36">
+							<SimpleCard className={"min-h-full"}>
+								<h5 className="font-bold">Dreamy Users</h5>
+								<h2 className="font-bold text-accent">8343+</h2>
+							</SimpleCard>
+							<SimpleCard className={"min-h-full"}>
+								<h5 className="font-bold">Transcript Made</h5>
+								<h2 className="font-bold text-accent">8343+</h2>
+							</SimpleCard>
+							<SimpleCard className={"min-h-full"}>
+								<h5 className="font-bold">Quizzes Solved</h5>
+								<h2 className="font-bold text-accent">8343+</h2>
+							</SimpleCard>
+						</div> */}
 					</div>
 					<div className="w-full px-8 grid grid-cols-3 place-items-stretch gap-16 mt-24">
 						<DynamicBodyCard
